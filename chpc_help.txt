@@ -1,0 +1,182 @@
+RTo get into the chpc cluster:
+ssh u0890227@kingspeak.chpc.utah.edu
+
+To access hysplit:
+module load hysplit
+
+Installing STILT
+1. Create an R environment https://www.youtube.com/watch?v=_CT_jAV4ULw
+2. Look at the UATAQ repo and figure out how to install
+3. Run basic models -->
+    1. Extract the Spacial portion with links form italy - prep meteo data increase speed
+    2. Look at format for input slice
+    3. Run Emiss_hours for 24hours if looking at daily averages
+    4. Grid of 0.01 x 0.01 degreees
+_______________________________________________________________________________________________________________________________
+Creating a version of R with Necessary Requirements for STILT
+
+1. Build R with writable modules
+Reference: https://www.chpc.utah.edu/documentation/software/r-language.php
+   a. module load R
+   b. mkdir -p ~/glmodules/myR (replace if you want, anyname is fine except R!!)
+   c. cp /uufs/chpc.utah.edu/sys/modulefiles/CHPC-18/Core/R/$R_VERSION.lua ~/glmodules/myR/
+   d. mkdir -p ~/RLIBS/$R_VERSION
+   e. vim ~/glmodules/myR/$R_VERSION.lua file
+      - add anywhere:
+          setenv("R_LIBS_USER",pathJoin("/uufs/chpc.utah.edu/common/home",os.getenv("USER"),"RLibs",myModuleVersion()))
+   f. module unload R
+   g. vim ~/.custom.sh
+      - add:  module use ~/glmodules
+   h. Check installation with echo $MODULEPATH
+      confirm that your ~/glmodules is at the start
+   i. module load myR/4.0.2
+   l. echo $R_LIBS_USER
+      - make sure this points to your RLibs!
+
+2. Downloading Stilt:
+- within the UofU environment there are missing dependencies rslurm and uataq
+  - install with:
+  install.packages(c("rslurm"),lib=c(paste("/uufs/chpc.utah.edu/common/home/",Sys.getenv("USER"),"/RLibs/",Sys.getenv("R_VERSION"),sep="")), repos=c("http://cran.us.r-project.org"),verbose=TRUE)
+  if (!require('devtools')) install.packages('devtools')
+  devtools::install_github('benfasoli/uataq')
+
+3. Using a github repo to run all code
+  a. git clone https://github.com/Hanson-Research-Lab/TRI_STILT.git
+  b. navigate to directory
+  c.  Rscript -e "uataq::stilt_init('test')"
+  d. [ERROR] - Getting a validate footprint extent ERROR
+
+4. Ben Advice: netcdf4 is causing issues:
+   a. To start a new project: instead use 
+      Rscript -e  "uataq::stilt_init('tutorial',branch='hysplit-merge')"
+   b. If the above command is used without specifying the branch, the program fails due to an error with gfortran
+
+5. Running STILT
+   a. Best to first look on chpc website (homepage system status) to see which areas have availability 
+
+   b. To check availability of nodes use sinfo
+      - Look for nodes which have the state of idle for usage
+   c. Edit the r/run_stilt.r (based on their documentation)
+      - Here edit for whatever slurm options you want in terms of nodes etc
+   d. use Rscript r/run_stilt.r to start the simulation 
+      - This auto calls the batch scheduler, do not have to be in active session or anything
+   e. All outputs will be saved in the output files as .rds files
+
+   
+
+________________________________________________________________________________________________________________________________
+xtrct-grid: Ben Fasoli software to downscale the size ARL files to speed up computations
+1. git clone https://github.com/benfasoli/xtrct-grid.git
+2. access using python3 ./xtrct-grid/entrypoint.py
+
+GOAL: Convert all of the mothnly NARR (79-16) data files stored at to only the border of utah +/- a few degrees:
+/uufs/chpc.utah.edu/common/home/lin-group5/NARR
+
+UTAH Center Lat/Long: (39.3210, 111.0937)
+
++/- 6 lat =/- 6 long
+(45.3210,117,0937)
+(45.3210,105.0937)
+(33.3210,117,093)
+(33.3210,105.0937)
+
+To run:
+1. create new script within xtrct-grid called batch_extract_grid.py
+   -dependent on python so make sure python3 is available 
+
+2. insert the following code: 
+      import glob
+      import subprocess
+      import os
+
+      #Double check this data is still available with Derrick Malia of LAIR
+      import_path = '/uufs/chpc.utah.edu/common/home/lin-group5/NARR/'
+      count=0
+
+      for filename in glob.glob(import_path+'NARR199[0-9]*'):
+            narr_filename = filename.split('/')[-1]
+            out_name = "UT_"+narr_filename
+
+            #Take all the names and run them through the python 3 script. This is intended to be run from the xtrct-grid folder  
+            print(narr_filename)
+            p=subprocess.Popen('python3 ./entrypoint.py \
+                                    --input_dir=$INPUT_DIR \
+         --input={0} \
+         --output_dir=$OUTPUT_DIR \
+         --output={1} \
+         --xmin=-117.0937 \
+         --xmax=-105.0937 \
+         --ymin=33.3210 \
+         --ymax=45.3210'.format(narr_filename,out_name),stdout=subprocess.PIPE,shell=True)
+
+            p.wait()
+
+            print(narr_filename + ' conversion complete')
+            count +=1
+
+
+3. create a directory where you want to store the data: 
+   -mkdir /uufs/chpc.utah.edu/common/home/u0890227/TRI_STILT/UT_NARR
+
+4. Write the input and output directories 
+   - export INPUT_DIR=/uufs/chpc.utah.edu/common/home/lin-group5/NARR
+   - export OUTPUT_DIR=/uufs/chpc.utah.edu/common/home/u0890227/TRI_STILT/UT_NARR
+
+5. Navigate to xtrct-grid directory and execute: 
+   -python3 batch_extract_grid.py 
+   - most likely need to use a compute node in order to ensure you don't go over on limit
+
+LOG: 
+run on 7.27.20
+
+________________________________________________________________________________________________________________________________
+Udocker - U's version of Udocker
+1. Install Image from a docker repo: udocker pull image_name
+2. Create Container from the Image: udocker create --name=xtract_grid benfasoli/xtrct-grid:latest
+3. Run the container: udocker run xtract-grid
+
+________________________________________________________________________________________________________________________________
+
+SLURM Commands: 
+myallocation - see where you have compute time on CHPC 
+   - lonepeak is non-premptible but quick availability is not guaranteed
+   - kingspeak and notchpeak are for all
+
+Check chpc website to see which servers have room for whatever you want to do
+Also if they can handle what you need to do
+
+login: ssh 
+
+squeue - shows all running jobs in cluster at a job 
+squeue -u u0890227 : shows jobs related to you 
+
+sinfo - status of different partitions 
+   - Look for nodes which have idle next to it for use 
+
+For more detailed commands: 
+https://chpc.utah.edu/documentation/software/slurm.php#aliases 
+Copy these tools into: vim ~/.aliases 
+   alias si="sinfo -o \"%20P %5D %14F %8z %10m %10d %11l %32f %N\""
+   alias si2="sinfo -o \"%20P %5D %6t %8z %10m %10d %11l %32f %N\""
+   alias sq="squeue -o \"%8i %12j %4t %10u %20q %20a %10g %20P %10Q %5D %11l %11L %R\""
+
+
+si - gives more information on the socket core and thread count with time limits. And the total amount of memory and tmp disk space
+
+Launch and Cancel Jobs: 
+srun - launches interactive job 
+   - srun --time=1:00:00 --ntasks=16 --nodes=1 --account=hanson --partition=notchpeak --pty /bin/bash -l
+
+sbatch - submits to slurm 
+   sbatch run_script.slurm
+
+
+With a job running... to cancel 
+scancel job_id (hard termination. All will be lost!)
+
+scontrol show job job_number
+   - shows information about the job 
+
+
+
+
