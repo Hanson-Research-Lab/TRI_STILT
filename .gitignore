@@ -1,0 +1,4 @@
+#All Files within carry no git tracking
+
+#ignore UT_NARR files
+data/raw/UT_NARR/
