@@ -1,0 +1,12 @@
+This document denotes the commands used to arrive at the data
+
+1. TRI_base_process_90_99.csv
+    - make data 
+2. TRI_base_process_90_18_nopubchem.csv 
+    - created to analyze EPA verification sensors from 90-2018. no pubchem data is added as TRI_Pubchem_CIDs.csv does not contain IDs from 2000-2018
+    - 	make data 
+        - (CHANGES TO MAKEFILE) src/data/make_data.py data/raw/Toxic_Release_Inventory_raw data/processed 1990 2018 0.20 ./data/raw/IARC_Class_Full_List.csv ./data/raw/TRI_Pubchem_CIDs.csv ./data/raw/RSEI_Facility_Data.csv
+        - (CHANGES TO make_data.py)
+            -comment out pubchem merge
+            - rsei_merge = data_RSEI_data_linkage(iarc_merge,rsei_path)
+            - change on save name

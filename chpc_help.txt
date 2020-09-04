@@ -48,7 +48,7 @@ Reference: https://www.chpc.utah.edu/documentation/software/r-language.php
 
 4. Ben Advice: netcdf4 is causing issues:
    a. To start a new project: instead use 
-      Rscript -e  "uataq::stilt_init('tutorial',branch='hysplit-merge')"
+      Rscript -e  "uataq::stilt_init('folder_name',branch='hysplit-merge')"
    b. If the above command is used without specifying the branch, the program fails due to an error with gfortran
 
 5. Running STILT
@@ -60,9 +60,9 @@ Reference: https://www.chpc.utah.edu/documentation/software/r-language.php
       - Here edit for whatever slurm options you want in terms of nodes etc
    d. use Rscript r/run_stilt.r to start the simulation 
       - This auto calls the batch scheduler, do not have to be in active session or anything
-   e. All outputs will be saved in the output files as .rds files
-
-   
+   e. bash ./test/test_setup.sh 
+   f. bash ./test/test_run_stilt.sh 
+   e. Modify the r file accordingly thereafter. 
 
 ________________________________________________________________________________________________________________________________
 xtrct-grid: Ben Fasoli software to downscale the size ARL files to speed up computations

@@ -1,0 +1,3 @@
+This document denotes the source origin of the data: 
+
+1. Toxic Release Inventory raw - original TRI Release Data
