@@ -29,10 +29,17 @@ clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
 
+#Convert files from netCDF stilt outputs to shapefiles [TO DO: Add multiplication ]
+stilt_output_conversion:
+	$(PYTHON_INTERPRETER) src/stilt_post_processing/make_stilt_outputs.py data/raw/STILT/090420_base_run data/processed/STILT 0.001 3857
+
 ## Lint using flake8
 lint:
 	flake8 src
 
+#DEV STUFF:
+save_requirements:
+	pip freeze > requirements.txt
 
 #################################################################################
 # PROJECT RULES                                                                 #

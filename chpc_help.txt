@@ -116,11 +116,11 @@ To run:
 
 
 3. create a directory where you want to store the data: 
-   -mkdir /uufs/chpc.utah.edu/common/home/u0890227/TRI_STILT/UT_NARR
+   -mkdir /uufs/chpc.utah.edu/common/home/u0890227/STILT/UT_NARR
 
 4. Write the input and output directories 
    - export INPUT_DIR=/uufs/chpc.utah.edu/common/home/lin-group5/NARR
-   - export OUTPUT_DIR=/uufs/chpc.utah.edu/common/home/u0890227/TRI_STILT/UT_NARR
+   - export OUTPUT_DIR=/uufs/chpc.utah.edu/common/home/u0890227/STILT/UT_NARR
 
 5. Navigate to xtrct-grid directory and execute: 
    -python3 batch_extract_grid.py 
