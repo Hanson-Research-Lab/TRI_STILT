@@ -176,7 +176,3 @@ scancel job_id (hard termination. All will be lost!)
 
 scontrol show job job_number
    - shows information about the job 
-
-
-
-

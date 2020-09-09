@@ -10,3 +10,8 @@ This document denotes the commands used to arrive at the data
             -comment out pubchem merge
             - rsei_merge = data_RSEI_data_linkage(iarc_merge,rsei_path)
             - change on save name
+3. unique_TRI_locations_heights_years_stilt_RUN.csv 
+    - All TRI releases compressed for STILT by keeping unique locations, heights and years. 
+    - Currently in explorer.ipynb as stilt_preprocess
+    - created to double check no extra simulations are being run (proximity in STILT output grid is < 1km)
+    - passed to heidi - 09/09/20
