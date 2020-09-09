@@ -1,0 +1,5 @@
+df <- read.csv('./stilt/code/unique_TRI_locations_heights_years_stilt_RUN.csv')
+temp <- subset(df,select=c(lati,long,zagl))
+#We should only need to run simulations for those with distinct lati, long and zagl (will need a way of rejoining later)
+temp <- unique(temp)
+#saveRDS(temp,file='receptors_1990.rds')
