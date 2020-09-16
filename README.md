@@ -3,6 +3,7 @@ All code is housed in the TRI_STILT Repo within the Hanson Lab Github. In order 
 
 ## Organization: 
 Under the home directory, two folders should exist: 
+
 1. STILT – a cloned directory to run all STILT simulations.
 2. TRI_STILT – a cloned directory to handle all pre/post data processing and visualization
   
@@ -44,19 +45,15 @@ All steps create an environment on CHPC to run STILT simulations.
     - Create the environment
         - `make clean` cleans the existing python caches
         - `make requirements` uses pip to install all requirements to run the src code
-3. 
-
-    1. With the virtual environment active, navigate into the TRI_STILT directory
-    2. Run: 
-        a. make clean
-            i. Cleans the existing python caches 
-        b. make requirements
-            i. uses pip to install all requirements to run the src code
 
 ## Pre-Processing: 
 
+1. Create Data: 
+    - `make data`
+    - Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached, saved under the dedicated output filepath + ‘/TRI_base_process_90_99.csv’. Change the inputs within the makefile as you deem fit for your project. For more information about the inputs, please view src/data/make_data.py.  
 
-
+2. Convert TRI releases into a STILT compatible format: 
+    - 
 Pre-Processing: 
     1. make data
         a. Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached, saved under the dedicated output filepath + ‘/TRI_base_process_90_99.csv’.  Change the inputs within the makefile as you deem fit for your project. For more information about the inputs, please view make_data.py.  

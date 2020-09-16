@@ -46,7 +46,7 @@ met_subgrid_levels <- NA
 
 # Model control
 n_hours    <- 24
-numpar     <- 200
+numpar     <- 1000
 rm_dat     <- T
 run_foot   <- T
 run_trajec <- T
