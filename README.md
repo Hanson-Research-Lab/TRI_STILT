@@ -1,25 +1,17 @@
-# TRI_STILT
-
-Running TRI STILT Simulations
-
-
-1. Want to be able to run the simulations then automatically trigger post processing where files are visualized and quantified in order to act as feedback mechanism. This requires batching the simulations then running them through a postprocessing step (on CHPC) where data, figures and metrics can all be collected. 
-
-STILT: 
+# STILT for TRI Modeling: 
 All code is housed in the TRI_STILT Repo within the Hanson Lab Github. In order to run simulations properly, This repo must be cloned onto CHPC servers. Additionally, a separate folder must be initialized for STILT simulations. See the read_me in the TRI_STILT repo for setup. All code operates under the Linux Make system. In this form, all analysis should be repeatable utilizing the original TRI data. 
 
-Requirements
-    1. Within CHPC, download and install stilt. See chpc_help.txt within TRI_STILT for more help. Note: none of this is protected information, so regular CHPC environment is fine.
-        a. Extract the NARR data for the years of interest (using xtrct-grid) and place into the STILT working directory. 
-    2. `git clone https://github.com/Hanson-Research-Lab/TRI_STILT.git`
-    3. Create and activate a python virtual environment with your preferred package manager 
-        a. I recommend pyenv or conda for this project 
+## Organization: 
+Under the home directory, two folders should exist: 
+1. STILT – a cloned directory to run all STILT simulations.
+2. TRI_STILT – a cloned directory to handle all pre/post data processing and visualization
+  
+The TRI_STILT follows a specific template in order to keep the repo as clean as possible. Below is a summary and purpose of each folder/file: [TO DO]
 
-Organization: 
-Under the home directory, two folders should exist: 1) STILT – a cloned directory to run all STILT simulations. 2) TRI_STILT – a cloned directory to handle all pre/post data processing and visualization.  The TRI_STILT follows a specific template in order to keep the repo as clean as possible. Below is a summary and purpose of each folder/file: [TO DO]
+## Setup: 
+All steps create an environment on CHPC to run STILT simulations. 
 
-Setup: 
-1. CHPC Setup https://www.chpc.utah.edu/documentation/software/r-language.php
+1. CHPC (https://www.chpc.utah.edu/documentation/software/r-language.php)
     - login to chpc `ssh uXXXXXXXX@XXXXpeak.chpc.utah.edu`
     - Setup R (need a custom environment for several of the libraries)
         - `module load R`
@@ -31,11 +23,28 @@ Setup:
             - `setenv("R_LIBS_USER",pathJoin("/uufs/chpc.utah.edu/common/home",os.getenv("USER"),"RLibs",myModuleVersion()))`
         - `module load myR`
         - To check the installation use `echo $R_LIBS_USER` and make sure this points to your RLibs
-        
-2. 
 
+2. STILT (https://github.com/uataq/stilt)
+    - Install the library
+        - `install.packages(c("rslurm"),lib=c(paste("/uufs/chpc.utah.edu/common/home/",Sys.getenv("USER"),"/RLibs/",Sys.getenv("R_VERSION"),sep="")), repos=c("http://cran.us.r-project.org"),verbose=TRUE)`
+        - `if (!require('devtools')) install.packages('devtools')`
+        - `devtools::install_github('benfasoli/uataq')`
+    - Create a project in the root directory
+        - `Rscript -e  "uataq::stilt_init('my_folder_name',branch='hysplit-merge')"`
+    - Test simulation (NECESSARY TO CONFIGURE ALL FILES)
+        - `bash ./test/test_setup.sh`
+        - `bash ./test/test_run_stilt.sh`
 
+3. Install a python dependency manager (conda or pyenv)
 
+4. TRI_STILT 
+    - Install the Repo
+        -`git clone https://github.com/Hanson-Research-Lab/TRI_STILT.git`
+    - Navigate into the directory
+    - Create the environment
+        - `make clean` cleans the existing python caches
+        - `make requirements` uses pip to install all requirements to run the src code
+3. 
 
     1. With the virtual environment active, navigate into the TRI_STILT directory
     2. Run: 
@@ -43,6 +52,10 @@ Setup:
             i. Cleans the existing python caches 
         b. make requirements
             i. uses pip to install all requirements to run the src code
+
+## Pre-Processing: 
+
+
 
 Pre-Processing: 
     1. make data
