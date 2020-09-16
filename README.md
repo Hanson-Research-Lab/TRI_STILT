@@ -20,8 +20,8 @@ Under the home directory, two folders should exist: 1) STILT – a cloned direct
 
 Setup: 
 1. CHPC Setup https://www.chpc.utah.edu/documentation/software/r-language.php
-    a. login to chpc `ssh uXXXXXXXX@XXXXpeak.chpc.utah.edu`
-    b. Setup R (need a custom environment for several of the libraries)
+    - login to chpc `ssh uXXXXXXXX@XXXXpeak.chpc.utah.edu`
+    - Setup R (need a custom environment for several of the libraries)
         - `module load R`
         - `mkdir -p ~/glmodules/myR` (replace if you want, any env is fine except R!!)
         - `cp /uufs/chpc.utah.edu/sys/modulefiles/CHPC-18/Core/R/$R_VERSION.lua ~/glmodules/myR/`
@@ -31,7 +31,7 @@ Setup:
             - `setenv("R_LIBS_USER",pathJoin("/uufs/chpc.utah.edu/common/home",os.getenv("USER"),"RLibs",myModuleVersion()))`
         - `module load myR`
         - To check the installation use `echo $R_LIBS_USER` and make sure this points to your RLibs
-
+        
 2. 
 
 
