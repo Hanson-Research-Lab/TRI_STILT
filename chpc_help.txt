@@ -178,3 +178,11 @@ scontrol show job job_number
    - shows information about the job 
 
 
+_________________________________________________________________-
+Launching Run
+bash stilt_prep.sh  
+cp ./TRI_STILT/src/stilt_run/091220_valid_run_2.r ./STILT/r/run_stilt.r 
+
+module load my R
+cd ./STILT/
+Rscript r/run_stilt.r
