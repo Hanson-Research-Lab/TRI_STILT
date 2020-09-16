@@ -3,4 +3,15 @@ This document denotes the commands used to arrive at the data within this folder
 1. EPA_validation.csv
     - csv file created from validation.ipynb --> contains nearby TRI releases to EPA sensors from 1990-2018.
     - Pulled on 09.04.20
+    - contains sensors within 10 km 
+    - data linked to data/processed/TRI_base_process_90_18_nopubchem.csv and data/raw/TRIChemicals_Monitors
+2. EPA_validation_50.csv
+    - csv file created from validation.ipynb --> contains nearby TRI releases to EPA sensors from 1990-2018.
+    - Pulled on 09.16.20
+    - contains sensors within 50 km 
+    - data linked to data/processed/TRI_base_process_90_18_nopubchem.csv and data/raw/TRIChemicals_Monitors
+3. EPA_validation_100.csv
+    - csv file created from validation.ipynb --> contains nearby TRI releases to EPA sensors from 1990-2018.
+    - Pulled on 09.16.20
+    - contains sensors within 100 km 
     - data linked to data/processed/TRI_base_process_90_18_nopubchem.csv and data/raw/TRIChemicals_Monitors
