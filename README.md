@@ -53,13 +53,19 @@ All steps create an environment on CHPC to run STILT simulations.
     - Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached, saved under the dedicated output filepath + ‘/TRI_base_process_90_99.csv’. Change the inputs within the makefile as you deem fit for your project. For more information about the inputs, please view src/data/make_data.py.  
 
 2. Convert TRI releases into a STILT compatible format: 
-    - 
+    - `make stilt_inputs`
 Pre-Processing: 
     1. make data
         a. Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached, saved under the dedicated output filepath + ‘/TRI_base_process_90_99.csv’.  Change the inputs within the makefile as you deem fit for your project. For more information about the inputs, please view make_data.py.  
     2. make stilt_inputs
         a. Executes src/data/make_stilt.py. This script converts the TRI csv file, into a format agreeable with STILT. This code is still under revision. This outputs, two CSV files in the /data/processed folder – *_id_mappings.csv contains the original TRI releases with an id column. Since STILT simulations only calculate flux fields, no concentration data is needed to run simulations. In order to cut down the number of simulations run, a subset of unique YEAR, LAT, LONG and HEIGHT (indicitivate of stack vs fugitive) are run by STILT. These are denoted by the *_stilt_RUN.csv file. The mappings join the simulations back to their original releases is contained within *_id_mappings.csv. 
         b. *_stilt_RUN.csv must now be converted to an R file and expanded based upon the dates of interest. Once processed, this file is saved to ./stilt/data/receptors_XX.rds. 
+
+
+[TO DO]
+FINISH THE METRICS FOR COMPARISON
+MAKE SURE EVERYTHING CAN RUN ON A COMPUTE NODE/BE SUBMITTED AS A SLURM JOB
+
 
 Running STILT
     1. First, a simulation .r file must be created based upon the hyperparameters of interest. This file is located within the /stilt/code/example_run.r. Change the parameters as necessary to fit the simulation. 
