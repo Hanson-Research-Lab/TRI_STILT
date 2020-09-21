@@ -36,7 +36,7 @@ stilt_input:
 
 #Convert files from netCDF stilt outputs to shapefiles [TO DO: Add multiplication ]
 stilt_output_conversion:
-	$(PYTHON_INTERPRETER) src/stilt_post_processing/make_stilt_outputs.py data/raw/STILT/092120_tuning_run_2 data/processed/stilt_output 0.0001 3857
+	$(PYTHON_INTERPRETER) src/stilt_post_processing/make_stilt_outputs.py data/raw/STILT/092120_hysplit_v_stilt data/processed/stilt_output 0 3857
 
 ## Lint using flake8
 lint:
