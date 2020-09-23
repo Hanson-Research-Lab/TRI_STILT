@@ -1,13 +1,3 @@
 This document denotes the source origin of the data: 
 
 1. Toxic Release Inventory raw - original TRI Release Data
-
-2. STILT - output netcdf files from STILT runs
-    - 090420_base_run - inital STILT run 
-        - forwarding netcdf files to heidi for post processing in ARC (does the grid align?)
-        - ./STILT/code/090420_base_run.r for code details
-        - Code to move files over for HYSPLIT comparison
-            - cp ./STILT/out/footprints/199001010000_-112.432_41.663_0_foot.nc ./TRI_STILT/data/raw/STILT/
-            - cp ./STILT/out/footprints/199001010000_-112.00081_40.72557_0_foot.nc ./TRI_STILT/data/raw/STILT/
-            - cp ./STILT/out/footprints/199001010000_-111.89273_40.70739_0_foot.nc ./TRI_STILT/data/raw/STILT/
-            - cp ./STILT/out/footprints/199001010000_-112.028221_41.093219_0_foot.nc ./TRI_STILT/data/raw/STILT/

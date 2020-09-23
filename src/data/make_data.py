@@ -14,7 +14,7 @@ import numpy as np
 #EXPORT CLEANED TRI DATA WITH LINKAGES 
 
 def data_loader(TRI_path, min_year, max_year):
-    """Converts a folder of TRI data into a single dataframe fr
+    """Converts a folder of TRI data into a single dataframe frame
 
     ===
     Inputs: 
@@ -40,6 +40,7 @@ def data_loader(TRI_path, min_year, max_year):
 
     #ONLY STACK AND FUGITIVE RELEASES
     raw_TRI_df = raw_TRI_df[(raw_TRI_df['51-FUGITIVEAIR']>0) | (raw_TRI_df['52-STACKAIR']>0)]
+
     #Select the data of interest
     return raw_TRI_df.loc[(raw_TRI_df['YEAR']>=min_year) & (raw_TRI_df["YEAR"] <= max_year)]
 
@@ -108,7 +109,7 @@ def data_iarc_linkage(TRI_clean_df, IARC_path, classes_of_interest):
 def data_pubchem_linkage(TRI_clean_df, pubchem_id_path):
     """Link pubchem information to TRI Data
 
-    Note: Currently there is no information coming in for Creosote, PCBs, Sulfuric Acids containg..., Methyl Isobutyl Ketone. These chemicals are either conglomerates or not represented in pubchem. For now they are being ommited.
+    Note: Currently there is no information coming in for Creosote, PCBs, Sulfuric Acids containing. These chemicals are either conglomerates or not represented in pubchem. For now they are being ommited.
 
     ===
     Inputs: 
@@ -299,9 +300,9 @@ def main(input_filepath, output_filepath, min_year,max_year, threshold, iarc_pat
     #Filter down the data    
     iarc_merge = data_iarc_linkage(tri_clean,iarc_path,['1','2A','2B',np.nan])
 
-    pubchem_merge = data_pubchem_linkage(iarc_merge, pubchem_path)
-    rsei_merge = data_RSEI_data_linkage(pubchem_merge,rsei_path)
-    rsei_merge.to_csv(output_filepath + '/TRI_base_process_90_99.csv')
+    #pubchem_merge = data_pubchem_linkage(iarc_merge, pubchem_path)
+    rsei_merge = data_RSEI_data_linkage(iarc_merge,rsei_path)
+    rsei_merge.to_csv(output_filepath + '/TRI_base_process_10_10.csv')
 
 if __name__ == '__main__': 
     main()

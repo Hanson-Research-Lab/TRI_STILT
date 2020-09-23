@@ -27,12 +27,12 @@ clean:
 
 ## Make Dataset
 data: 
-	$(PYTHON_INTERPRETER) src/data/make_data.py data/raw/Toxic_Release_Inventory_raw data/processed 1990 1999 0.20 ./data/raw/IARC_Class_Full_List.csv ./data/raw/TRI_Pubchem_CIDs.csv ./data/raw/RSEI_Facility_Data.csv
+	$(PYTHON_INTERPRETER) src/data/make_data.py data/raw/Toxic_Release_Inventory_raw data/processed 2010 2010 0.20 ./data/raw/IARC_Class_Full_List.csv ./data/raw/TRI_Pubchem_CIDs.csv ./data/raw/RSEI_Facility_Data.csv
 
 #Convert the data into STILT Compatible Format
 stilt_input:
-	$(PYTHON_INTERPRETER) src/data/make_stilt_data_1.py data/processed/TRI_base_process_90_99.csv data/processed/unique_TRI_location_height_year 1990 1999
-	Rscript src/data/make_stilt_data_2.r data/processed/unique_TRI_location_height_year_stilt_RUN.csv data/processed/stilt_input/receptors_subsample_092120.rds TRUE
+	$(PYTHON_INTERPRETER) src/data/make_stilt_data_1.py data/processed/STYRENE_DEMO.csv data/processed/STYRENE_DEMO_UNIQUE 2010 2010
+	Rscript src/data/make_stilt_data_2.r data/processed/STYRENE_DEMO_UNIQUE_stilt_RUN.csv data/processed/stilt_input/receptors_subsample_092120.rds TRUE
 
 #Convert files from netCDF stilt outputs to shapefiles [TO DO: Add multiplication ]
 stilt_output_conversion:

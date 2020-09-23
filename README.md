@@ -63,9 +63,8 @@ Pre-Processing:
 
 
 [TO DO]
-FINISH THE METRICS FOR COMPARISON
 MAKE SURE EVERYTHING CAN RUN ON A COMPUTE NODE/BE SUBMITTED AS A SLURM JOB
-
+WRITEUP POST PROCESSING PIPELINE read me
 
 Running STILT
     1. First, a simulation .r file must be created based upon the hyperparameters of interest. This file is located within the /stilt/code/example_run.r. Change the parameters as necessary to fit the simulation. 
