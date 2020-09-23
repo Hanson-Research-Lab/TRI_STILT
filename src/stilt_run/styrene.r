@@ -20,7 +20,7 @@ slurm_options <- list(
 )
 
 # Receptor location(s)
-receptors <- readRDS('receptors_subsample_092120.rds')
+receptors <- readRDS('styrene.rds')
 
 # Footprint grid settings, must set at least xmn, xmx, ymn, ymx below
 hnf_plume <- T

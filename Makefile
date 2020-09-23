@@ -32,7 +32,7 @@ data:
 #Convert the data into STILT Compatible Format
 stilt_input:
 	$(PYTHON_INTERPRETER) src/data/make_stilt_data_1.py data/processed/STYRENE_DEMO.csv data/processed/STYRENE_DEMO_UNIQUE 2010 2010
-	Rscript src/data/make_stilt_data_2.r data/processed/STYRENE_DEMO_UNIQUE_stilt_RUN.csv data/processed/stilt_input/receptors_subsample_092120.rds TRUE
+	Rscript src/data/make_stilt_data_2.r data/processed/STYRENE_DEMO_UNIQUE_stilt_RUN.csv data/processed/stilt_input/styrene.rds TRUE
 
 #Convert files from netCDF stilt outputs to shapefiles [TO DO: Add multiplication ]
 stilt_output_conversion:
