@@ -86,6 +86,10 @@ def data_iarc_linkage(TRI_clean_df, IARC_path, classes_of_interest):
     #Select those chemicals with a 1,2A or 2B designation (KNOWN CARCINOGENS)
     known_carc = iarc_df[iarc_df.Group.isin(classes_of_interest)]
 
+    #within the known carcinogens group, cobalt and Di(2-ethylhexyl)phthalate contain duplicates, we need to remove these
+    known_carc = known_carc[known_carc.Agent != 'Cobalt metal without tungsten carbide']
+    known_carc = known_carc[known_carc.Agent != 'Bis(2-ethylhexyl) phthalate (see Di(2-ethylhexyl) phthalate)']
+    
     #Merge the data
     iarc_merge = known_carc.merge(TRI_clean_df, 
                                         left_on='CAS_No', 

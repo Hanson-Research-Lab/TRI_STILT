@@ -1,3 +1,4 @@
 #All Files within carry no git tracking
 
-figures/cdx
+figures/
+data/validation/TRI_ValidationSet.csv

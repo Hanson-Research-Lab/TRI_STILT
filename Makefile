@@ -32,11 +32,11 @@ data:
 #Convert the data into STILT Compatible Format
 stilt_input:
 	$(PYTHON_INTERPRETER) src/data/make_stilt_data_1.py data/processed/TRI_base_process_90_99.csv data/processed/unique_TRI_location_height_year 1990 1999
-	Rscript src/data/make_stilt_data_2.r data/processed/unique_TRI_location_height_year_stilt_RUN.csv data/processed/stilt_input/090920_valid_run_1.rds TRUE
+	Rscript src/data/make_stilt_data_2.r data/processed/unique_TRI_location_height_year_stilt_RUN.csv data/processed/stilt_input/receptors_subsample_092120.rds TRUE
 
 #Convert files from netCDF stilt outputs to shapefiles [TO DO: Add multiplication ]
 stilt_output_conversion:
-	$(PYTHON_INTERPRETER) src/stilt_post_processing/make_stilt_outputs.py data/raw/STILT/092120_hysplit_v_stilt data/processed/stilt_output 0 3857
+	$(PYTHON_INTERPRETER) src/stilt_post_processing/make_stilt_outputs.py data/processed/stilt_output/netcdf/092120_hysplit_v_stilt data/processed/stilt_output/shapefile/092120_hysplit_v_stilt data/processed/unique_TRI_location_height_year_stilt_RUN.csv data/processed/unique_TRI_location_height_year_id_mappings.csv 0 3857
 
 ## Lint using flake8
 lint:
