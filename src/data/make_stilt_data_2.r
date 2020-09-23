@@ -19,5 +19,5 @@ DF_new$Date <- as.Date(DF_new$ID2,DF_new$OrigDate)
 DF_new <- subset(DF_new, select = -c(ID2,OrigDate,id,YEAR))
 
 #For now we only need a small testing subset './stilt/data/receptors_subsample_090920.rds'
-#random_sample <- sample_n(DF_new, 20)
-saveRDS(DF_new,file= output_path)
+sample <- sample_n(DF_new, 20)
+saveRDS(sample,file= output_path)
