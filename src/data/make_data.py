@@ -123,10 +123,12 @@ def data_pubchem_linkage(TRI_clean_df, pubchem_id_path):
     #Load Pubchem IDs
     pubchem_ids = pd.read_csv(pubchem_id_path)
 
-    #Verify there are no missing chemicals 
+    #Verify there are no missing chemicals. If there are missing chemicals print them out and 
     if TRI_clean_df.CHEMICAL.drop_duplicates().reset_index(drop=True).equals(pubchem_ids.CHEMICAL) != True:
-        print('There is a chemicals in TRI_clean_df which have no pubchem ids. Please fix!')
-        quit()
+        print('There are chemical(s) in TRI_clean_df which have no pubchem ids. Pubchem data was not added.')
+        print('Please add the ids in data/raw/TRI_Pubchem_CIDS for the following chemicals:')
+        print(TRI_clean_df.CHEMICAL.drop_duplicates().reset_index(drop=True)[~TRI_clean_df.CHEMICAL.drop_duplicates().reset_index(drop=True).isin(pubchem_ids.CHEMICAL)])
+        return TRI_clean_df
     
     ##Adding Pubchem information: 
     tox_df = []
@@ -136,6 +138,7 @@ def data_pubchem_linkage(TRI_clean_df, pubchem_id_path):
     pubchem_api_link = 'https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/XXX/JSON'
 
     #First we need to query all the of the urls
+    #NOTE THERE IS STILL A PROBLEM WITH METHYL ISOBUTYL KETONE. For some reason the API hates the query
     for pubchem_id in pubchem_ids.Pubchem_ID:
 
         #Want only the URLs which are not nan to continue through the pipeline
@@ -291,7 +294,6 @@ def main(input_filepath, output_filepath, min_year,max_year, threshold, iarc_pat
         cleaned data ready to be analyzed (saved in ../processed).
     """
     #Steps of data preprocessing go in here:
-
     #Load the Data
     tri_raw_df = data_loader(input_filepath, int(min_year), int(max_year))
     #Clean the Data
@@ -300,9 +302,10 @@ def main(input_filepath, output_filepath, min_year,max_year, threshold, iarc_pat
     #Filter down the data    
     iarc_merge = data_iarc_linkage(tri_clean,iarc_path,['1','2A','2B',np.nan])
 
-    #pubchem_merge = data_pubchem_linkage(iarc_merge, pubchem_path)
-    rsei_merge = data_RSEI_data_linkage(iarc_merge,rsei_path)
-    rsei_merge.to_csv(output_filepath + '/TRI_base_process_10_10.csv')
+    #merge on the pubchem information 
+    pubchem_merge = data_pubchem_linkage(iarc_merge, pubchem_path)
+    rsei_merge = data_RSEI_data_linkage(pubchem_merge,rsei_path)
+    rsei_merge.to_csv(output_filepath +'_{0}_{1}.csv'.format(int(min_year),int(max_year)))
 
 if __name__ == '__main__': 
     main()
