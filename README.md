@@ -1,6 +1,13 @@
 # STILT for TRI Modeling: 
 All code is housed in the TRI_STILT Repo within the Hanson Lab Github. In order to run simulations properly, This repo must be cloned onto CHPC servers. Additionally, a separate folder must be initialized for STILT simulations. See the read_me in the TRI_STILT repo for setup. All code operates under the Linux Make system. In this form, all analysis should be repeatable utilizing the original TRI data. 
 
+<p align="center">
+  <a href="https://github.com/Hanson-Research-Lab">
+    <img src="logo.png" width=300/>
+  </a>
+</p>
+
+![Project Logo](logo.png)
 ## Organization: 
 Under the home directory, two folders should exist: 
 
@@ -62,11 +69,21 @@ All steps create an environment on CHPC to run STILT simulations.
         - `make clean` cleans the existing python caches
         - `make requirements` uses pip to install all requirements to run the src code
 
+---
 ## Pre-Processing: 
 
 1. **Clean Data:** 
     - `make data`
-    - **Description** <br>Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached, saved under the dedicated output filepath + ‘/TRI_base_process_90_99.csv’. Change the inputs within the makefile as you deem fit for your project. For code details please visit src/data/make_data.py 
+    - **Description** <br>Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached. Change the inputs within the makefile as you deem fit for your project. For code details please visit src/data/make_data.py.
+    - **Assumptions**
+        1. Keeps only Fugitive and Stack Air Releases
+        2. Removes any columns with over the threshold amount for missing data
+        3. Keeps select columns of use: 'YEAR','TRIFD','FRSID','FACILITYNAME','CITY','COUNTY','ST','ZIP','LATITUDE','LONGITUDE','INDUSTRYSECTORCODE','INDUSTRYSECTOR','CHEMICAL','CAS#/COMPOUNDID','METAL','CARCINOGEN' ,'UNITOFMEASURE','51-FUGITIVEAIR','52-STACKAIR','INDUSTRYSECTORCODE','PRODUCTIONWSTE(81-87)'
+        4. IARC does not exist for the following chemicals so they are filled accordingly.  
+            - Strong-inorganic-acid mists containing sulfuric acid (see Acid mists) - CLASS 1 
+            - Bis(2-ethylhexyl) phthalate (see Di(2-ethylhexyl) phthalate) - CLASS 2B
+        5. Pubchem merge is conditionally dependent on all chemical files being present within the TRI_Pubchem_CIDS.csv file. If chemicals are not found, this step is skipped. Within the CIDS.csv several of the chemicals do not have an ID (Creosote, PCB, Sulfuric Acid (1994..) and METHYL ISOBUTYL KETONE). This indicates the chemical does not have a functional or easily defineable pubchem CID. 
+        6. The primary purpose of the RSEI merge is to estimate stack height of fugitive releases
     - **Inputs (see makefile)**
         1. _Script to Run:_ src/data/make_data.py
         2. _Input Filepath_ - Path to TRI data. All TRI release files must be labeled as tri_YEAR_ut.csv.
@@ -79,8 +96,8 @@ All steps create an environment on CHPC to run STILT simulations.
         9. _RSEI Path_ - Path to RSEI data from the EPA. 
     - **Outputs** 
         1. Single csv file of name output_filepath_name_min_year_max_year.csv. I recommend placing this output within data/processed
-
-2. Convert TRI releases into a STILT compatible format: 
+---
+2. **Convert to STILT Input Format:** 
     - `make stilt_inputs`
 Pre-Processing: 
     1. make data

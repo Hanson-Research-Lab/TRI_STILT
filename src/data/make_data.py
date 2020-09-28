@@ -55,7 +55,7 @@ def data_clean(tri_data_raw, threshold):
     Returns: 
     1. pandas dataframe with clean data
     """
-    clean_index = tri_data_raw.isna().sum()<math.floor(tri_data_raw.shape[0]*0.2)
+    clean_index = tri_data_raw.isna().sum()<math.floor(tri_data_raw.shape[0]*threshold)
     tri_data_raw.loc[:,clean_index.index[clean_index==True]]
     return tri_data_raw[['YEAR','TRIFD','FRSID','FACILITYNAME','CITY','COUNTY','ST','ZIP','LATITUDE','LONGITUDE','INDUSTRYSECTORCODE','INDUSTRYSECTOR','CHEMICAL','CAS#/COMPOUNDID','METAL','CARCINOGEN' ,'UNITOFMEASURE','51-FUGITIVEAIR','52-STACKAIR','INDUSTRYSECTORCODE','PRODUCTIONWSTE(81-87)']]
 
