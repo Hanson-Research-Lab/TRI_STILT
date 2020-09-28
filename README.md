@@ -1,5 +1,5 @@
 # STILT for TRI Modeling: 
-Greg Lee, Heidi Hanson, Joemy Ramsay and Ben Fasoli
+Greg Lee, Heidi Hanson, Joemy Ramsay and Ben Fasoli<br>
 September 26th 2020
 
 <p align="center">
@@ -20,6 +20,7 @@ The TRI_STILT follows a specific template in order to keep the repo as clean as 
 
 <br>
 ---
+
 ## Setup: 
 All steps create an environment on CHPC to run STILT simulations. 
 
@@ -79,11 +80,12 @@ All steps create an environment on CHPC to run STILT simulations.
             - Currently an issue with RTree and CHPC!
 
 5. **Extracting Utah Data from NARR Files** 
-    - [TO DO although should be unnessecary]
+    - [TO DO although should be unnecessary]
 
 
 <br>
 ---
+
 ## Pre-Processing
 
 All steps are built utilizing a make style system. Before running, please edit the `Makefile` with the desired directories and variables. If choosing to run this on CHPC, you will need to use an interactive compute node or slurm job. For an interactive node use `srun --time=1:00:00 --ntasks=16 --nodes=1 --account=hanson --partition=notchpeak --pty /bin/bash -l`. 
@@ -142,6 +144,7 @@ All steps are built utilizing a make style system. Before running, please edit t
 
 <br>
 ---
+
 ## Running Simulations on CHPC
 
 1. **Create a run_stilt.r file** 
@@ -187,6 +190,7 @@ All steps are built utilizing a make style system. Before running, please edit t
 
 <br>
 ---
+
 ## Post Processing
 
 These steps become more intensive in terms of processing. It is best to either use slurm batch scripting or an interactive node if you choose to run this portion of the program on CHPC
