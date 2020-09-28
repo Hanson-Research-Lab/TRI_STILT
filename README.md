@@ -19,12 +19,12 @@ In order to run simulations properly, This repo must be cloned onto CHPC servers
 The TRI_STILT follows a specific template in order to keep the repo as clean as possible. Below is a summary and purpose of each folder/file: [TO DO]
 
 <br>
----
 
+---
 ## Setup: 
 All steps create an environment on CHPC to run STILT simulations. 
 
-1. **CHPC (https://www.chpc.utah.edu/documentation/software/r-language.php)**
+1. **[CHPC](https://www.chpc.utah.edu/documentation/software/r-language.php)**
     - login to chpc `ssh uXXXXXXXX@XXXXpeak.chpc.utah.edu`
     - Create a directory for modules (unless you already have one built)
         - `mkdir ./gl_modules`
@@ -33,20 +33,21 @@ All steps create an environment on CHPC to run STILT simulations.
         - `mkdir -p ~/gl_modules/myR` (replace if you want, any env is fine except R!!)
         - `ls /uufs/chpc.utah.edu/sys/modulefiles/CHPC-18/Core/R/` (and look for the most recent version of R. Here will use )
         - `cp /uufs/chpc.utah.edu/sys/modulefiles/CHPC-18/Core/R/4.0.2.lua ~/gl_modules/myR/`
-        - `mkdir -p ~/RLibs/4.0.2.lua` (creating a place to install any new libraries)
+        - `mkdir -p ~/RLibs/4.0.2/` (creating a place to install any new libraries)
         - `vim ~/gl_modules/myR/4.0.2.lua`
             - add anywhere: 
             - `setenv("R_LIBS_USER",pathJoin("/uufs/chpc.utah.edu/common/home",os.getenv("USER"),"RLibs",myModuleVersion()))`
-        - Add several features to your custom.sh file (add anywhere)
-            - `vim ./.custom.sh`
-                - Add `module use ~/gl_modules`
-                - Add `module load netcdf-c`
-        - exit the terminal, reload then try: 
+        - Reload Terminal to update all scripts
+        - Enable Modules (This should be done everytime, unless custom.sh is modified to include these commands) 
+            - `module use ~/gl_modules`
+            - `module load myR`
+            - `module load netcdf-c`
+        - exit the terminal, reload and try: 
             - `module load myR`
         - To check the installation use `echo $R_LIBS_USER` and make sure this points to your RLibs
 
-2. **STILT (https://github.com/uataq/stilt)**
-    - Install the library
+2. **[STILT](https://github.com/uataq/stilt)**
+    - Install the library using an R terminal
         - `install.packages(c("rslurm"),lib=c(paste("/uufs/chpc.utah.edu/common/home/",Sys.getenv("USER"),"/RLibs/",Sys.getenv("R_VERSION"),sep="")), repos=c("http://cran.us.r-project.org"),verbose=TRUE)`
         - `if (!require('devtools')) install.packages('devtools')`
         - `devtools::install_github('benfasoli/uataq')`
@@ -80,12 +81,14 @@ All steps create an environment on CHPC to run STILT simulations.
             - Currently an issue with RTree and CHPC!
 
 5. **Extracting Utah Data from NARR Files** 
-    - [TO DO although should be unnecessary]
+    - If available use the following to sync the UT NARR files: 
+        - `rsync -azv /uufs/chpc.utah.edu/common/home/u0890227/STILT/UT_NARR ~/`
+    - If not available, the LAIR group holds versions of NARR data which can be converted to get the same NARR files using [xtrct-grid](https://github.com/benfasoli/xtrct-grid), a software package from Ben Fasoli. 
 
 
 <br>
----
 
+---
 ## Pre-Processing
 
 All steps are built utilizing a make style system. Before running, please edit the `Makefile` with the desired directories and variables. If choosing to run this on CHPC, you will need to use an interactive compute node or slurm job. For an interactive node use `srun --time=1:00:00 --ntasks=16 --nodes=1 --account=hanson --partition=notchpeak --pty /bin/bash -l`. 
@@ -143,8 +146,8 @@ All steps are built utilizing a make style system. Before running, please edit t
         3. `temp_name.rds` - Conversion of _RUN.csv to rds file format with extension of dates from year to all days within the year
 
 <br>
----
 
+---
 ## Running Simulations on CHPC
 
 1. **Create a run_stilt.r file** 
@@ -181,7 +184,7 @@ All steps are built utilizing a make style system. Before running, please edit t
         - `scontrol show job job_number` - shows information about a run
 
 3. **Collecting Simulation Footprints** 
-    - **Description:** <br> As the job processes simulation data will be processed into the `./STILT/out/footprints/` directory. Once completed (check with squeue - should see no active jobs) the data needs to be moved to TRI_STILT for storage and post-processing. This involves a quick move of the data!
+    - **Description:** <br> As the job processes simulation data will be processed into the `./STILT/out/footprints/` directory. Once completed (check with squeue - should see no active jobs) the data needs to be moved to TRI_STILT for storage and post-processing. This involves a quick move of the data! Again, this can be modified into a single bash script or kept single. Whichever works best for you!
     - **Procedure:**
         1. Make a new directory for the simulation run within TRI_STILT
             - `mkdir ./TRI_STILT/data/processed/stilt_output/netcdf/run_name`
@@ -189,8 +192,8 @@ All steps are built utilizing a make style system. Before running, please edit t
             - `cp ./STILT/out/footprints/* ./TRI_STILT/data/processed/stilt_output/netcdf/run_name/`
 
 <br>
----
 
+---
 ## Post Processing
 
 These steps become more intensive in terms of processing. It is best to either use slurm batch scripting or an interactive node if you choose to run this portion of the program on CHPC
