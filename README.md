@@ -1,25 +1,29 @@
 # STILT for TRI Modeling: 
-All code is housed in the TRI_STILT Repo within the Hanson Lab Github. In order to run simulations properly, This repo must be cloned onto CHPC servers. Additionally, a separate folder must be initialized for STILT simulations. See the read_me in the TRI_STILT repo for setup. All code operates under the Linux Make system. In this form, all analysis should be repeatable utilizing the original TRI data. 
+Greg Lee, Heidi Hanson, Joemy Ramsay and Ben Fasoli
+September 26th 2020
 
 <p align="center">
   <a href="https://github.com/Hanson-Research-Lab">
-    <img src="logo.png" width=300/>
+    <img src="logo.png"/>
   </a>
 </p>
 
-![Project Logo](logo.png)
-## Organization: 
-Under the home directory, two folders should exist: 
+## Structure 
+In order to run simulations properly, This repo must be cloned onto CHPC servers. Additionally, a separate folder must be initialized for STILT simulations.
+
+1. CHPC
 
 1. STILT – a cloned directory to run all STILT simulations.
 2. TRI_STILT – a cloned directory to handle all pre/post data processing and visualization
   
 The TRI_STILT follows a specific template in order to keep the repo as clean as possible. Below is a summary and purpose of each folder/file: [TO DO]
 
+<br>
+---
 ## Setup: 
 All steps create an environment on CHPC to run STILT simulations. 
 
-1. CHPC (https://www.chpc.utah.edu/documentation/software/r-language.php)
+1. **CHPC (https://www.chpc.utah.edu/documentation/software/r-language.php)**
     - login to chpc `ssh uXXXXXXXX@XXXXpeak.chpc.utah.edu`
     - Create a directory for modules (unless you already have one built)
         - `mkdir ./gl_modules`
@@ -32,11 +36,15 @@ All steps create an environment on CHPC to run STILT simulations.
         - `vim ~/gl_modules/myR/4.0.2.lua`
             - add anywhere: 
             - `setenv("R_LIBS_USER",pathJoin("/uufs/chpc.utah.edu/common/home",os.getenv("USER"),"RLibs",myModuleVersion()))`
+        - Add several features to your custom.sh file (add anywhere)
+            - `vim ./.custom.sh`
+                - Add `module use ~/gl_modules`
+                - Add `module load netcdf-c`
         - exit the terminal, reload then try: 
             - `module load myR`
         - To check the installation use `echo $R_LIBS_USER` and make sure this points to your RLibs
 
-2. STILT (https://github.com/uataq/stilt)
+2. **STILT (https://github.com/uataq/stilt)**
     - Install the library
         - `install.packages(c("rslurm"),lib=c(paste("/uufs/chpc.utah.edu/common/home/",Sys.getenv("USER"),"/RLibs/",Sys.getenv("R_VERSION"),sep="")), repos=c("http://cran.us.r-project.org"),verbose=TRUE)`
         - `if (!require('devtools')) install.packages('devtools')`
@@ -47,7 +55,7 @@ All steps create an environment on CHPC to run STILT simulations.
         - `bash ./test/test_setup.sh`
         - `bash ./test/test_run_stilt.sh`
 
-3. Create a python virtual environment  
+3. **Python Virtual Environment on CHPC**  
     - Load the python version of interest
         - `which python (view current version of python)`
         - `module spider python`
@@ -61,31 +69,33 @@ All steps create an environment on CHPC to run STILT simulations.
         - `source ~/gl_modules/mystilt_env/bin/activate`
     - You should see the virtual environment active - see a (mystilt_env) [uxxxxx@kingspeak1:~]
 
-4. TRI_STILT 
+4. **TRI_STILT**
     - Install the Repo
         -`git clone https://github.com/Hanson-Research-Lab/TRI_STILT.git`
-    - Navigate into the directory
-    - Create the environment
+    - Install Libraries
         - `make clean` cleans the existing python caches
         - `make requirements` uses pip to install all requirements to run the src code
+            - Currently an issue with RTree and CHPC!
 
+<br>
 ---
-## Pre-Processing: 
+## Pre-Processing
+All steps are built utilizing a make style system. Before running, please edit the `Makefile` with the desired directories and variables. 
 
-1. **Clean Data:** 
-    - `make data`
-    - **Description** <br>Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached. Change the inputs within the makefile as you deem fit for your project. For code details please visit src/data/make_data.py.
-    - **Assumptions**
+1. **Clean Data** 
+    - **Description:** <br>Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached. Change the inputs within the makefile as you deem fit for your project. For code details please visit src/data/make_data.py.
+    - **Assumptions:**
         1. Keeps only Fugitive and Stack Air Releases
         2. Removes any columns with over the threshold amount for missing data
-        3. Keeps select columns of use: 'YEAR','TRIFD','FRSID','FACILITYNAME','CITY','COUNTY','ST','ZIP','LATITUDE','LONGITUDE','INDUSTRYSECTORCODE','INDUSTRYSECTOR','CHEMICAL','CAS#/COMPOUNDID','METAL','CARCINOGEN' ,'UNITOFMEASURE','51-FUGITIVEAIR','52-STACKAIR','INDUSTRYSECTORCODE','PRODUCTIONWSTE(81-87)'
+        3. Keeps select columns of use: YEAR, TRIFD, FRSID, FACILITYNAME, CITY, COUNTRY, ST, ZIP, LATITUDE, LONGITUDE, INDUSTRYSECTORCODE, CHEMICAL, CAS#/COMPOUNDID, METAL, CARCINOGEN, UNITOFMEASURE, 51-FUGITIVEAIR and 52-STACKAIR. 
         4. IARC does not exist for the following chemicals so they are filled accordingly.  
             - Strong-inorganic-acid mists containing sulfuric acid (see Acid mists) - CLASS 1 
             - Bis(2-ethylhexyl) phthalate (see Di(2-ethylhexyl) phthalate) - CLASS 2B
         5. Pubchem merge is conditionally dependent on all chemical files being present within the TRI_Pubchem_CIDS.csv file. If chemicals are not found, this step is skipped. Within the CIDS.csv several of the chemicals do not have an ID (Creosote, PCB, Sulfuric Acid (1994..) and METHYL ISOBUTYL KETONE). This indicates the chemical does not have a functional or easily defineable pubchem CID. 
         6. The primary purpose of the RSEI merge is to estimate stack height of fugitive releases
-    - **Inputs (see makefile)**
-        1. _Script to Run:_ src/data/make_data.py
+    - **Makefile Command:** `make data`
+    - **Inputs:**
+        1. _Source Script_ - src/data/make_data.py
         2. _Input Filepath_ - Path to TRI data. All TRI release files must be labeled as tri_YEAR_ut.csv.
         3. _Output Filepath_ - Path to export cleaned data. Note: only the label of the file is needed as the years of the simulation and csv are added to the export ie data/processed/test_clean will fill to data/processed/test_clean_1990_2018.csv.
         4. _Min Year_ - An integer filter to keep only tri releases from the min year on (>=)
@@ -94,14 +104,61 @@ All steps create an environment on CHPC to run STILT simulations.
         7. _IARC Path_ - Path to IARC chemical data 
         8. _Pubchem Path_ - Path to Pubchem path. NOTE: pubchem is linked via a pubchem ID to the name of the chemical. This file is done for chemicals from 1990-1999. If these simulations are run in the future, a user will need to edit this file to include pubchem IDs for all new chemicals. If information is not available for all chemicals, this step is skipped and no pubchem information is linked. 
         9. _RSEI Path_ - Path to RSEI data from the EPA. 
-    - **Outputs** 
+    - **Outputs:** 
         1. Single csv file of name output_filepath_name_min_year_max_year.csv. I recommend placing this output within data/processed
----
+
 2. **Convert to STILT Input Format:** 
-    - `make stilt_inputs`
+    - **Description:** <br> Takes the cleaned TRI filepath and extracts the height, latitude,  longitude and time for STILT simulations. Aggregations occur for simulations and fugitive and stack releases are seperated per simulation run. Columns are renamed to lati, long, zagl and run_times. DO NOT ALTER THESE OR THE SIMULATIONS WILL SHOW AN IMPORT NULL ERROR. Per each TRI year, an expansion step is performed so releases happen on a daily basis. 
+    - **Assumptions:**
+        1. Currently date expansion is accounting for leap years
+        2. No dates in the year are being omitted. If you wanted to change this edit the RDF File Conversion script
+        3. Simulations which have identical year, lati, long and release height can be considered identical for modeling purposes
+    - **Makefile Command:** `make stilt_input`
+    - **Inputs:**
+        1. Python Processing
+            - _Source Script_ - `src/data/make_stilt_data_1.py`
+            - _TRI Filepath_ - Path to the cleaned TRI data csv file aka: output_filepath_name_min_year_max_year.csv
+            - _Output Filepath_ - File path and name for the exported data. Two outputs are produced to compress the number of simulations run. For example if output filepath is labeled data/processed/temp_tri, two outputs would appear within data/processed titled:
+                - `temp_tri_RUN.csv` - input for STILT
+                - `temp_tri_IDMAPPING.csv` - Compression map to find which simulations pair with what chemicals. Selections are removed based upon identical simulation height, lat/long and year (time). 
+            - _Min Year_ - An additional year filter (in case you want to run different inputs from the same TRI file)
+            - _Max Year_ - An additional year filter
+        2. RDF File Conversion 
+            - _Source Script_ - `src/data/make_stilt_data_2.r`
+            - _Input path_ - Path to the `_RUN.csv` file
+            - _Output path_ - Save path with rds extension. Recommended save in `data/processed/stilt_input/temp_tri.rds`
+            - _Random Sample_ - Boolean to indicate whether a subsample should be taken of the original data. [CURRENTLY UNIMPLEMENTED!]
+    - **Outputs:**
+        1. `_RUN.csv` - unique TRI releases based upon lati, long, zagl and year
+        2. `_IDMAPPING.csv` - map to connect stilt simulations back to TRI releases
+        3. `temp_name.rds` - Conversion of _RUN.csv to rds file format with extension of dates from year to all days within the year
+
+<br>
+---
+## Running Simulations on CHPC
+
+1. **Create a run_stilt.r file** 
+    - **Description:** <br> In order to run stilt, a run_stilt.r file need to provided to the STILT program which governs all of the configuration [variables](https://uataq.github.io/stilt/#/configuration). 
+    - **Assumptions:** 
+
+2. **Convert to STILT Input Format:** 
+    - **Description:** <br> 
+    - **Assumptions:**
+        1. 
+    - **Makefile Command:** `make stilt_input`
+    - **Inputs:**
+        1. Python Processing
+            - _Source Script_ - `src/data/make_stilt_data_1.py`
+            - _TRI Filepath_ - 
+            - _Output Filepath_ - 
+            - __
+        2. Conversion to R
+            - _Source Script_ - `src/data/make_stilt_data_2.r`
+        1. 
+    - **Outputs:**
+
+
 Pre-Processing: 
-    1. make data
-        a. Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached, saved under the dedicated output filepath + ‘/TRI_base_process_90_99.csv’.  Change the inputs within the makefile as you deem fit for your project. For more information about the inputs, please view make_data.py.  
     2. make stilt_inputs
         a. Executes src/data/make_stilt.py. This script converts the TRI csv file, into a format agreeable with STILT. This code is still under revision. This outputs, two CSV files in the /data/processed folder – *_id_mappings.csv contains the original TRI releases with an id column. Since STILT simulations only calculate flux fields, no concentration data is needed to run simulations. In order to cut down the number of simulations run, a subset of unique YEAR, LAT, LONG and HEIGHT (indicitivate of stack vs fugitive) are run by STILT. These are denoted by the *_stilt_RUN.csv file. The mappings join the simulations back to their original releases is contained within *_id_mappings.csv. 
         b. *_stilt_RUN.csv must now be converted to an R file and expanded based upon the dates of interest. Once processed, this file is saved to ./stilt/data/receptors_XX.rds. 

@@ -35,8 +35,8 @@ def STILT_converter(df,min_year,max_year,save_base_name):
     stilt_trace_mapping = base_df.merge(stilt_run_id, on=['lati','long','zagl','YEAR']).sort_values(by='id')
 
     #save the files
-    stilt_trace_mapping.to_csv(str(save_base_name + '_id_mappings.csv'),index=False)
-    stilt_run_id.to_csv(str(save_base_name + '_stilt_RUN.csv'),index = False)
+    stilt_trace_mapping.to_csv(str(save_base_name + '_IDMAPPING.csv'),index=False)
+    stilt_run_id.to_csv(str(save_base_name + '_RUN.csv'),index = False)
 
 #Click represents a package to easily interface between the terminal and python 
 #Note all click commands must be in line with the function they are wrapping
