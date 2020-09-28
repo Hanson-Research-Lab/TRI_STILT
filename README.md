@@ -66,18 +66,18 @@ All steps create an environment on CHPC to run STILT simulations.
 
 1. **Clean Data:** 
     - `make data`
-    - *Description:* Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached, saved under the dedicated output filepath + ‘/TRI_base_process_90_99.csv’. Change the inputs within the makefile as you deem fit for your project. For code details please visit src/data/make_data.py 
-    - *Inputs (see makefile)*
-        1. Script to Run: src/data/make_data.py
-        2. Input Filepath - Path to TRI data. All TRI release files must be labeled as tri_YEAR_ut.csv.
-        3. Output Filepath - Path to export cleaned data. Note: only the label of the file is needed as the years of the simulation and csv are added to the export ie data/processed/test_clean will fill to data/processed/test_clean_1990_2018.csv.
-        4. Min Year - An integer filter to keep only tri releases from the min year on (>=)
-        5. Max Year - An integer filter to keep only tri releases from the max year and below (<=)
-        6. Threshold - Missing values threshold. Throws out any variables which have greater than that percentage of missing data. 0.2 ~ 20% of rows are missing within that column
-        7. IARC Path - Path to IARC chemical data 
-        8. Pubchem Path - Path to Pubchem path. NOTE: pubchem is linked via a pubchem ID to the name of the chemical. This file is done for chemicals from 1990-1999. If these simulations are run in the future, a user will need to edit this file to include pubchem IDs for all new chemicals. If information is not available for all chemicals, this step is skipped and no pubchem information is linked. 
-        9. RSEI Path - Path to RSEI data from the EPA. 
-    - *Outputs*
+    - **Description** <br>Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached, saved under the dedicated output filepath + ‘/TRI_base_process_90_99.csv’. Change the inputs within the makefile as you deem fit for your project. For code details please visit src/data/make_data.py 
+    - **Inputs (see makefile)**
+        1. _Script to Run:_ src/data/make_data.py
+        2. _Input Filepath_ - Path to TRI data. All TRI release files must be labeled as tri_YEAR_ut.csv.
+        3. _Output Filepath_ - Path to export cleaned data. Note: only the label of the file is needed as the years of the simulation and csv are added to the export ie data/processed/test_clean will fill to data/processed/test_clean_1990_2018.csv.
+        4. _Min Year_ - An integer filter to keep only tri releases from the min year on (>=)
+        5. _Max Year_ - An integer filter to keep only tri releases from the max year and below (<=)
+        6. _Threshold_ - Missing values threshold. Throws out any variables which have greater than that percentage of missing data. 0.2 ~ 20% of rows are missing within that column
+        7. _IARC Path_ - Path to IARC chemical data 
+        8. _Pubchem Path_ - Path to Pubchem path. NOTE: pubchem is linked via a pubchem ID to the name of the chemical. This file is done for chemicals from 1990-1999. If these simulations are run in the future, a user will need to edit this file to include pubchem IDs for all new chemicals. If information is not available for all chemicals, this step is skipped and no pubchem information is linked. 
+        9. _RSEI Path_ - Path to RSEI data from the EPA. 
+    - **Outputs** 
         1. Single csv file of name output_filepath_name_min_year_max_year.csv. I recommend placing this output within data/processed
 
 2. Convert TRI releases into a STILT compatible format: 
