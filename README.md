@@ -14,15 +14,19 @@ All steps create an environment on CHPC to run STILT simulations.
 
 1. CHPC (https://www.chpc.utah.edu/documentation/software/r-language.php)
     - login to chpc `ssh uXXXXXXXX@XXXXpeak.chpc.utah.edu`
-    - Setup R (need a custom environment for several of the libraries)
+    - Create a directory for modules (unless you already have one built)
+        - `mkdir ./gl_modules`
+    - Setup a custom R environment to download the required libraries
         - `module load R`
-        - `mkdir -p ~/glmodules/myR` (replace if you want, any env is fine except R!!)
-        - `cp /uufs/chpc.utah.edu/sys/modulefiles/CHPC-18/Core/R/$R_VERSION.lua ~/glmodules/myR/`
-        - `mkdir -p ~/RLIBS/$R_VERSION`
-        - `vim ~/glmodules/myR/$R_VERSION.lua`
+        - `mkdir -p ~/gl_modules/myR` (replace if you want, any env is fine except R!!)
+        - `ls /uufs/chpc.utah.edu/sys/modulefiles/CHPC-18/Core/R/` (and look for the most recent version of R. Here will use )
+        - `cp /uufs/chpc.utah.edu/sys/modulefiles/CHPC-18/Core/R/4.0.2.lua ~/gl_modules/myR/`
+        - `mkdir -p ~/RLibs/4.0.2.lua` (creating a place to install any new libraries)
+        - `vim ~/gl_modules/myR/4.0.2.lua`
             - add anywhere: 
             - `setenv("R_LIBS_USER",pathJoin("/uufs/chpc.utah.edu/common/home",os.getenv("USER"),"RLibs",myModuleVersion()))`
-        - `module load myR`
+        - exit the terminal, reload then try: 
+            - `module load myR`
         - To check the installation use `echo $R_LIBS_USER` and make sure this points to your RLibs
 
 2. STILT (https://github.com/uataq/stilt)
@@ -36,7 +40,19 @@ All steps create an environment on CHPC to run STILT simulations.
         - `bash ./test/test_setup.sh`
         - `bash ./test/test_run_stilt.sh`
 
-3. Install a python dependency manager (conda or pyenv)
+3. Create a python virtual environment  
+    - Load the python version of interest
+        - `which python (view current version of python)`
+        - `module spider python`
+    - Activate python 3.7
+        - `module load python/3.7.3`
+        - `which python` (should see a chpc origin)
+    - Gather python3.7 and install with system site packages (this will create the virtual environment within gl_modules -- mystiltenv)
+        - `python3.7 -m venv --system-site-packages ~/gl_modules/mystilt_env`
+    - Launch the virtual environemnt
+        - `module unload python/3.7.3`
+        - `source ~/gl_modules/mystilt_env/bin/activate`
+    - You should see the virtual environment active - see a (mystilt_env) [uxxxxx@kingspeak1:~]
 
 4. TRI_STILT 
     - Install the Repo
@@ -48,9 +64,21 @@ All steps create an environment on CHPC to run STILT simulations.
 
 ## Pre-Processing: 
 
-1. Create Data: 
+1. **Clean Data:** 
     - `make data`
-    - Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached, saved under the dedicated output filepath + ‘/TRI_base_process_90_99.csv’. Change the inputs within the makefile as you deem fit for your project. For more information about the inputs, please view src/data/make_data.py.  
+    - *Description:* Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached, saved under the dedicated output filepath + ‘/TRI_base_process_90_99.csv’. Change the inputs within the makefile as you deem fit for your project. For code details please visit src/data/make_data.py 
+    - *Inputs (see makefile)*
+        1. Script to Run: src/data/make_data.py
+        2. Input Filepath - Path to TRI data. All TRI release files must be labeled as tri_YEAR_ut.csv.
+        3. Output Filepath - Path to export cleaned data. Note: only the label of the file is needed as the years of the simulation and csv are added to the export ie data/processed/test_clean will fill to data/processed/test_clean_1990_2018.csv.
+        4. Min Year - An integer filter to keep only tri releases from the min year on (>=)
+        5. Max Year - An integer filter to keep only tri releases from the max year and below (<=)
+        6. Threshold - Missing values threshold. Throws out any variables which have greater than that percentage of missing data. 0.2 ~ 20% of rows are missing within that column
+        7. IARC Path - Path to IARC chemical data 
+        8. Pubchem Path - Path to Pubchem path. NOTE: pubchem is linked via a pubchem ID to the name of the chemical. This file is done for chemicals from 1990-1999. If these simulations are run in the future, a user will need to edit this file to include pubchem IDs for all new chemicals. If information is not available for all chemicals, this step is skipped and no pubchem information is linked. 
+        9. RSEI Path - Path to RSEI data from the EPA. 
+    - *Outputs*
+        1. Single csv file of name output_filepath_name_min_year_max_year.csv. I recommend placing this output within data/processed
 
 2. Convert TRI releases into a STILT compatible format: 
     - `make stilt_inputs`
