@@ -51,6 +51,7 @@ All steps create an environment on CHPC to run STILT simulations.
         - `devtools::install_github('benfasoli/uataq')`
     - Create a project in the root directory
         - `Rscript -e  "uataq::stilt_init('my_folder_name',branch='hysplit-merge')"`
+        - For the purposes of this tutorial, name the project STILT
     - Test simulation (NECESSARY TO CONFIGURE ALL FILES)
         - `bash ./test/test_setup.sh`
         - `bash ./test/test_run_stilt.sh`
@@ -77,10 +78,15 @@ All steps create an environment on CHPC to run STILT simulations.
         - `make requirements` uses pip to install all requirements to run the src code
             - Currently an issue with RTree and CHPC!
 
+5. **Extracting Utah Data from NARR Files** 
+    - [TO DO although should be unnessecary]
+
+
 <br>
 ---
 ## Pre-Processing
-All steps are built utilizing a make style system. Before running, please edit the `Makefile` with the desired directories and variables. 
+
+All steps are built utilizing a make style system. Before running, please edit the `Makefile` with the desired directories and variables. If choosing to run this on CHPC, you will need to use an interactive compute node or slurm job. For an interactive node use `srun --time=1:00:00 --ntasks=16 --nodes=1 --account=hanson --partition=notchpeak --pty /bin/bash -l`. 
 
 1. **Clean Data** 
     - **Description:** <br>Executes src/data/make_data.py. This script cleans and converts all TRI raw data into a single csv, with RSEI and Pubchem information attached. Change the inputs within the makefile as you deem fit for your project. For code details please visit src/data/make_data.py.
@@ -93,6 +99,7 @@ All steps are built utilizing a make style system. Before running, please edit t
             - Bis(2-ethylhexyl) phthalate (see Di(2-ethylhexyl) phthalate) - CLASS 2B
         5. Pubchem merge is conditionally dependent on all chemical files being present within the TRI_Pubchem_CIDS.csv file. If chemicals are not found, this step is skipped. Within the CIDS.csv several of the chemicals do not have an ID (Creosote, PCB, Sulfuric Acid (1994..) and METHYL ISOBUTYL KETONE). This indicates the chemical does not have a functional or easily defineable pubchem CID. 
         6. The primary purpose of the RSEI merge is to estimate stack height of fugitive releases
+        7. Keeping all data which is not of IARC class 3 (known to not be carcinogenic)
     - **Makefile Command:** `make data`
     - **Inputs:**
         1. _Source Script_ - src/data/make_data.py
@@ -126,7 +133,7 @@ All steps are built utilizing a make style system. Before running, please edit t
         2. RDF File Conversion 
             - _Source Script_ - `src/data/make_stilt_data_2.r`
             - _Input path_ - Path to the `_RUN.csv` file
-            - _Output path_ - Save path with rds extension. Recommended save in `data/processed/stilt_input/temp_tri.rds`
+            - _Output path_ - Save path with rds extension. Recommended save in `data/processed/stilt_input/temp_name.rds`
             - _Random Sample_ - Boolean to indicate whether a subsample should be taken of the original data. [CURRENTLY UNIMPLEMENTED!]
     - **Outputs:**
         1. `_RUN.csv` - unique TRI releases based upon lati, long, zagl and year
@@ -138,8 +145,52 @@ All steps are built utilizing a make style system. Before running, please edit t
 ## Running Simulations on CHPC
 
 1. **Create a run_stilt.r file** 
-    - **Description:** <br> In order to run stilt, a run_stilt.r file need to provided to the STILT program which governs all of the configuration [variables](https://uataq.github.io/stilt/#/configuration). 
-    - **Assumptions:** 
+    - **Description:** <br> In order to run stilt, a run_stilt.r file need to provided to the STILT program which governs all of the configuration [variables](https://uataq.github.io/stilt/#/configuration). For clarity, please create this file under and `src/stilt_run/date_description.r`, changing date and description for the run accordingly. I find it easiest to copy the `/src/stilt_run/template_run.r` file and only change what is necessary within a local editor, than push the changes to github and sync with CHPC.
+    - **Changes:** 
+        - _slurm options_ - change the time, account and partition based upon your CHPC account. Account reflects the lab name typically and partition represents the CHPC compute node you will use to run the program.
+        - _run times_ - Add in the name of the rds file from the previous step (`temp_name.rds`). No filepath is necessary here as this file will be moved into the stilt main directory. 
+        - _time integrate_ - Changed to TRUE (not default) so STILT will create an average over the allocated n_hour time window
+        - _xmn xmx ymn ymx and xres_ - changed to reflect the boundary of Utah with a bit of a cushion. 
+        - _met directory_ - changed to reflect the directory within the STILT project where the UT NARR data is stored. 
+        - _met file format_ - changed to reflect the naming nomenclature of UT_NARR files
+        - _n hours_ - changed to be 24 to reflect the simulations are running for 24 hours following the release
+        - _numpar_ - changed to 1000 on recommendation from Ben Fasoli. For highest efficiency this parameter may need to be tuned (see `notebooks/stilt_parameter_tuning.ipynb` for more on this). 
+2. **Starting a STILT Simulation** 
+    - **Description:** <br> All steps up to this point have been run within the TRI_STILT project folder. These steps can be run on CHPC on locally, whichever suits you best. The following steps require the CHPC user to be within their home directory (both TRI_STILT and STILT directories should be visible with the `ls` command). This portion showcases all the steps to batch a simulation run out to slurm. I would recommend collapsing all these steps into bash script (sh)
+    - **Procedure**
+        1. Clear any previous STILT outputs
+            - `rm ./STILT/out/particles/*`
+            - `rm ./STILT/out/footprints/*`
+            - `rm ./STILT/out/by_id/*`
+        2. Copy over the file to run stilt and rename to typical stilt convention
+            - `cp ./TRI_STILT/src/stilt_run/date_description.r ./STILT/r/run_stilt.r`
+        3. Copy over the data for the run
+            - `cp ./TRI_STILT/data/processed/stilt_input/temp_name.rds ./STILT/`
+        4. Load module and run the program 
+            - `module load myR`
+            - `cd ./STILT/`
+            - `Rscript r/run_stilt.r`
+        5. STILT automatically batches in the simulations to CHPC (Thanks Ben and UATAQ team!)
+    - **CHPC Helpful Commands** 
+        - `squeue -u uXXXXXXX` : shows jobs related to you 
+        - `sinfo` - status of different partitions
+        - `scancel job_id` - cancel a job
+        - `scontrol show job job_number` - shows information about a run
+
+3. **Collecting Simulation Footprints** 
+    - **Description:** <br> As the job processes simulation data will be processed into the `./STILT/out/footprints/` directory. Once completed (check with squeue - should see no active jobs) the data needs to be moved to TRI_STILT for storage and post-processing. This involves a quick move of the data!
+    - **Procedure:**
+        1. Make a new directory for the simulation run within TRI_STILT
+            - `mkdir ./TRI_STILT/data/processed/stilt_output/netcdf/run_name`
+        2. Copy the files into this new directory
+            - `cp ./STILT/out/footprints/* ./TRI_STILT/data/processed/stilt_output/netcdf/run_name/`
+
+<br>
+---
+## Post Processing
+
+These steps become more intensive in terms of processing. It is best to either use slurm batch scripting or an interactive node if you choose to run this portion of the program on CHPC
+
 
 2. **Convert to STILT Input Format:** 
     - **Description:** <br> 
@@ -158,27 +209,6 @@ All steps are built utilizing a make style system. Before running, please edit t
     - **Outputs:**
 
 
-Pre-Processing: 
-    2. make stilt_inputs
-        a. Executes src/data/make_stilt.py. This script converts the TRI csv file, into a format agreeable with STILT. This code is still under revision. This outputs, two CSV files in the /data/processed folder – *_id_mappings.csv contains the original TRI releases with an id column. Since STILT simulations only calculate flux fields, no concentration data is needed to run simulations. In order to cut down the number of simulations run, a subset of unique YEAR, LAT, LONG and HEIGHT (indicitivate of stack vs fugitive) are run by STILT. These are denoted by the *_stilt_RUN.csv file. The mappings join the simulations back to their original releases is contained within *_id_mappings.csv. 
-        b. *_stilt_RUN.csv must now be converted to an R file and expanded based upon the dates of interest. Once processed, this file is saved to ./stilt/data/receptors_XX.rds. 
-
-
-[TO DO]
-MAKE SURE EVERYTHING CAN RUN ON A COMPUTE NODE/BE SUBMITTED AS A SLURM JOB
-WRITEUP POST PROCESSING PIPELINE read me
-
-Running STILT
-    1. First, a simulation .r file must be created based upon the hyperparameters of interest. This file is located within the /stilt/code/example_run.r. Change the parameters as necessary to fit the simulation. 
-    2. Once configured, copy this file into the STILT working directories. This will overwrite the current run_stilt.r file.
-        a. cd -- 
-        b. cp ./TRI_STILT/stilt/code/example_run.r ./STILT/r/run_stilt.r
-        c. cp ./TRI_STILT/stilt/data/receptors_XX.rds ./STILT/
-    3. To run the simulations simply run:
-        a. cd ./STILT/
-        b. RScript ./r/run_stilt.r
-    4. This automatically batches all data through SLURM and no configuration of a compute node/slurm job is necessary. 
-    5. All outputs will become available in ./out/footprints/ as netcdf files
 
 Post-processing:
 {IN PROGRESS}
