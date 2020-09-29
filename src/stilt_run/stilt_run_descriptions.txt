@@ -1,4 +1,0 @@
-Tuning Runs: Adjusting hyperparameters for STILT - particle number and smoothing parameters
-
-091620_tuning_run_1: 200 particles smoothing 1 (default parameters)
-092120_tuning_run_2: 1000 particles smoothing 1 (default parameters)  - had to update stilt to get the bug fixes which fixed the banding present above

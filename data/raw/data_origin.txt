@@ -1,3 +1,26 @@
-This document denotes the source origin of the data: 
+Data Origin for /data/raw 
+gl
+09.28.20
 
-1. Toxic Release Inventory raw - original TRI Release Data
+1. Toxic_Release_Inventory_raw 
+    - original TRI Release Data from UBOX Environmental_Data_Master/Chemicals_Hazardous_Waste/Toxic_Release_Inventory
+    - 1987-2018
+    - Origin: https://www.epa.gov/toxics-release-inventory-tri-program/tri-basic-data-files-calendar-years-1987-2018
+
+2. IARC_Class_Full_List.csv
+    - Data in UBox Environmental_Data_Master/Chemicals_Hazardous_Waste/IARC_Class_Full_List.csv
+    - Origin: https://monographs.iarc.fr/list-of-classifications 
+    - pulled 02.21.20
+
+3. RSEI_Facility_Data.csv
+    - Data in UBox Environmental_Data_Master/Chemicals_Hazardous_Waste/RSEI_Facility_Data.csv
+    - Origin: https://www.epa.gov/rsei/rsei-data-dictionary-facility-data
+    - pulled 02.02.20
+
+4. TRI_Carc_Half_Lives.csv
+    - An assemble of chemicals and their related weight and solubility. Used for HYSPLIT modeling. Replaced by pubchem information
+    - Keeping in case it is helpful
+
+5. TRI_Pubchem_CIDs.csv
+    - A lookup table for pubchem API querry. Last edited 09.24.20. 
+    - KNOWN PROBLEM: Methyl Isobutyl Ketone produces an error if querried from the API

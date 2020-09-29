@@ -1,4 +1,7 @@
 #All Files within carry no git tracking
 
 figures/
+
+#Large files - all should be saved in ubox
 data/validation/TRI_ValidationSet.csv
+data/processed/stilt_input/092520_styrene_test.csv

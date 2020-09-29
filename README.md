@@ -8,8 +8,7 @@ September 26th 2020
   </a>
 </p>
 
-## Structure 
-In order to run simulations properly, This repo must be cloned onto CHPC servers. Additionally, a separate folder must be initialized for STILT simulations.
+## Structure & Organization
 
 1. CHPC
 
@@ -102,14 +101,14 @@ All steps are built utilizing a make style system. Before running, please edit t
         4. IARC does not exist for the following chemicals so they are filled accordingly.  
             - Strong-inorganic-acid mists containing sulfuric acid (see Acid mists) - CLASS 1 
             - Bis(2-ethylhexyl) phthalate (see Di(2-ethylhexyl) phthalate) - CLASS 2B
-        5. Pubchem merge is conditionally dependent on all chemical files being present within the TRI_Pubchem_CIDS.csv file. If chemicals are not found, this step is skipped. Within the CIDS.csv several of the chemicals do not have an ID (Creosote, PCB, Sulfuric Acid (1994..) and METHYL ISOBUTYL KETONE). This indicates the chemical does not have a functional or easily defineable pubchem CID. 
+        5. Pubchem merge is conditionally dependent on all chemical files being present within the `TRI_Pubchem_CIDS.csv` file. If chemicals are not found, this step is skipped. Within the CIDS.csv several of the chemicals do not have an ID (Creosote, PCB, Sulfuric Acid (1994..) and methyl isobutyl ketone). This indicates the chemical does not have a functional or easily defineable pubchem CID. 
         6. The primary purpose of the RSEI merge is to estimate stack height of fugitive releases
         7. Keeping all data which is not of IARC class 3 (known to not be carcinogenic)
     - **Makefile Command:** `make data`
     - **Inputs:**
         1. _Source Script_ - src/data/make_data.py
         2. _Input Filepath_ - Path to TRI data. All TRI release files must be labeled as tri_YEAR_ut.csv.
-        3. _Output Filepath_ - Path to export cleaned data. Note: only the label of the file is needed as the years of the simulation and csv are added to the export ie data/processed/test_clean will fill to data/processed/test_clean_1990_2018.csv.
+        3. _Output Filepath_ - Path to export cleaned data. Note: only the label of the file is needed as the years of the simulation and csv are added to the export ie `data/processed/test_clean` will fill to `data/processed/test_clean_1990_2018.csv`.
         4. _Min Year_ - An integer filter to keep only tri releases from the min year on (>=)
         5. _Max Year_ - An integer filter to keep only tri releases from the max year and below (<=)
         6. _Threshold_ - Missing values threshold. Throws out any variables which have greater than that percentage of missing data. 0.2 ~ 20% of rows are missing within that column
@@ -173,6 +172,8 @@ All steps are built utilizing a make style system. Before running, please edit t
         3. Copy over the data for the run
             - `cp ./TRI_STILT/data/processed/stilt_input/temp_name.rds ./STILT/`
         4. Load module and run the program 
+            - `module use ~/gl_modules`
+            - `module load netcdf-c`
             - `module load myR`
             - `cd ./STILT/`
             - `Rscript r/run_stilt.r`
@@ -194,38 +195,63 @@ All steps are built utilizing a make style system. Before running, please edit t
 <br>
 
 ---
-## Post Processing
+## Post-Processing
 
-These steps become more intensive in terms of processing. It is best to either use slurm batch scripting or an interactive node if you choose to run this portion of the program on CHPC
+These steps become more intensive in terms of processing. It is best to either use slurm batch scripting or an interactive node (see pre-processing for creating an interactive node session) if you choose to run this portion of the program on CHPC
 
-
-2. **Convert to STILT Input Format:** 
-    - **Description:** <br> 
+1. **Pair netCDF Footprints to TRI Releases** 
+    - **Description:** <br> In pre-processing, the TRI release amounts were removed to eliminate simulation overlap. Now these concentrations must be multiplied on a lbs/day basis to the stilt 0.01 x 0.01 km flux field. Furthermore, for ease of use, the individual release dataframes are combined into a single output frame for easier post-processing. 
     - **Assumptions:**
-        1. 
+        1. Not yet accounting for leap year
+        2. csv is a workable output
+        3. This is still a slow process. Needs acceleration for large batches to not create a bottleneck. Consider join instead of merge within make_stilt_outputs.py or a better method for compression of data into a single UT_exposure dataframe. 
     - **Makefile Command:** `make stilt_input`
     - **Inputs:**
-        1. Python Processing
-            - _Source Script_ - `src/data/make_stilt_data_1.py`
-            - _TRI Filepath_ - 
-            - _Output Filepath_ - 
-            - __
-        2. Conversion to R
-            - _Source Script_ - `src/data/make_stilt_data_2.r`
-        1. 
+        1. _stilt netcdf file path_ - file path to folder of STILT footprints (netcdf .nc format) 
+        2. _save file csv_ - filepath and name to save the final csv 
+        3. _run file path_ - filepath to the csv file used to create the stilt outputs `_RUN.csv`
+        4. _id mappings file path_ - filepath to the csv file with the TRI mappings ie `_IDMAPPINGS.csv` 
+        5. _gridding threshold_ - Threshold to limit values which are included from the netcdf files (exported as a grid with 0's for those grid cells with nothing in them)
+
     - **Outputs:**
+        1. Single csv file to the save file path. Below are the specifics of the dataframe. 
+            - _lat_ - Grid cell latitude center
+            - _lon_ - Grid cell longitude center
+            - _foot_ - Grid cell flux
+            - _lbsperday_ - Grid cell calculated concentration (Release/365 * foot). Does not account for leap year
+            - _id_ - ID used to merge back to original TRI releases (ID maps a single simulation back to all TRI releases with that lat, long, zagl and year)
+            - _TRI_source_lati_ - TRI source emission latitude 
+            - _TRI_source_long_ - TRI source emission latitude 
+            - _zagl_ - Height of the release (in meters)
+            - _Chemical_ - Chemical released
+            - _Release (lbs/year)_ - Initial TRI release
+            - _YEAR_ - Year the TRI report was submitted
+            - _ss name_ - name of the related STILT simulation
+            - _ss path_ - path to related STILT simulation
+            - _ss date_ - date the simulation was run
 
+2. **Visualizing Output** 
+    - **Description:** <br> In order to visualize and explore outputs from post-processing, a simple jupyter notebook was put together called post_processing.ipynb. Within the notebook, an output .csv can be loaded into a geodataframe and visualized. 
+    - Lets put an image here
 
+<br>
 
-Post-processing:
-{IN PROGRESS}
+---
+## Validation
 
-STILT Tuning:
-Ben Fasoli, a member of the STILT development team recommended we examine the effect of chaning particles and smoothing levels to find a stable model. In order to do this, we are looking at several factors: 
-    3. The plume area as determined by convex hull
-    4. The mean distance between the source point and each particle
-    5. The coeffecient of variation for the “foot” of all the particles. 	
-Ben noted that these values should reach an “elbow” point where the model stabalizes and isn’t highly dependent on small changes in particles and smoothing. Greg is beginning to run these simulations and store metrics and visualization to distill these ideal parameters. Note that these parameters also enable comparison between simulations to guage how the shape is changing (IOU between two plumes) and how much stability there is on a cell to cell basis (COV)
+**Parameter Tuning** 
+Intially, we believed there was some tuning processes to elucidate the ideal model parameters for our case. To evaluate how particles and smoothing affected model we came up with three metrics.  Note that these parameters also enable comparison between simulations to guage how the shape is changing (IOU between two plumes) and how much stability there is on a cell to cell basis (COV) 
 
-Validation:
-There exist some EPA sensors which monitor chemicals within the air back to 1990 and are within reasonable proximity to a TRI release. In order to boost the strength of our validation, we plan to model relevant TRI releases through 2018 with comparable EPA sensor data to validate how well our model estimates chemical concentration. {IN PROGRESS}
+1. The plume area as determined by convex hull
+2. The mean distance between the source point and grid cells > 0
+3. The coeffecient of variation for the foot of the simulation
+
+After chatting with Ben, it was decided that 1,000 particles was alright for our use case. If we ever need to return to those intial metrics, they are housed in `notebooks/stilt_parameter_tuning.ipynb`.
+
+**Comparison to Hysplit** 
+STILT and HYSPLIT are both programs capable of tracking particles in time. Initially they started as the same program and have diverged over time. We wanted to sanity check our STILT simulations by comparins HYSPLIT and STILT simulations. This work is done within `notebooks/hysplit_vs_stilt.ipynb` with figures in `figures/hysplit_v_stilt`. 
+
+**EPA Monitor Validation** 
+There exist some EPA sensors which monitor chemicals within the air back to 1990 and are within reasonable proximity to a TRI release. In order to boost the strength of our validation, we plan to model relevant TRI releases through 2018 with comparable EPA sensor data to validate how well our model estimates chemical concentration. {IN PROGRESS --> see `notebooks/validation.ipynb`}
+
+Note: This requires an added datafile from the UBOX (TRI_ValidationSet.csv into `data/validation/`)

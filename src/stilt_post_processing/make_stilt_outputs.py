@@ -24,8 +24,8 @@ def nc_open(path):
     df = xr.open_dataarray(path)
     return df.to_dataframe().reset_index()
 
-def stilt_netcdf_to_gdf(stilt_df, threshold,epsg):
-    '''Takes a stilt particle output, in a pandas dataframe, and converts to a geopandas object.  
+def stilt_netcdf_to_gdf(stilt_df, threshold):
+    '''Takes a stilt footprint, filters based upon a threshold and averages the simulation 
 
     Input:
     ----------
@@ -40,12 +40,6 @@ def stilt_netcdf_to_gdf(stilt_df, threshold,epsg):
         stilt_df = stilt_df[stilt_df.foot>threshold] 
     
     sim_avg = stilt_df.groupby(['lat','lon']).agg({'foot':'mean'}).reset_index()
-
-    #Converting to a geodataframe type object
-    sim_avg = gpd.GeoDataFrame(sim_avg, geometry=gpd.points_from_xy(sim_avg.lon, sim_avg.lat)).set_crs(epsg=4326)
-    sim_avg = sim_avg.to_crs(epsg=epsg)
-
-    #Extract 
     return sim_avg
 
 
@@ -58,9 +52,8 @@ def stilt_netcdf_to_gdf(stilt_df, threshold,epsg):
 @click.argument('run_df_path', type=click.Path(exists=True))
 @click.argument('id_mappings_path', type=click.Path(exists=True))
 @click.argument('gridding_threshold')
-@click.argument('epsg')
 
-def main(stilt_filepath, save_filepath, run_df_path,id_mappings_path, gridding_threshold ,epsg):
+def main(stilt_filepath, save_filepath, run_df_path,id_mappings_path, gridding_threshold):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
 
@@ -112,7 +105,7 @@ def main(stilt_filepath, save_filepath, run_df_path,id_mappings_path, gridding_t
         stilt_sim_gdf = nc_open(stilt_sim_df['ss_path'].iloc[rows])
         
         #Convert to a geodataframe
-        stilt_sim_gdf = stilt_netcdf_to_gdf(stilt_sim_gdf,float(gridding_threshold), int(epsg))
+        stilt_sim_gdf = stilt_netcdf_to_gdf(stilt_sim_gdf,float(gridding_threshold))
 
         #Calculate the concentrations per cell
         stilt_sim_gdf['lbsperday'] = stilt_sim_gdf.foot * stilt_sim_df['Release (lbs/year)'].iloc[rows]/365 #not accounting for leap year yet
@@ -123,9 +116,8 @@ def main(stilt_filepath, save_filepath, run_df_path,id_mappings_path, gridding_t
     stilt_sim_gdf = pd.concat(temp_data_list)
     stilt_sim_gdf = stilt_sim_gdf.merge(stilt_sim_df).rename(columns = {'lati':'TRI_source_lati','long':'TRI_source_long'})
 
-    #Save as a shapefile
-    os.mkdir(save_filepath)
-    stilt_sim_gdf.to_file(save_filepath +'/stilt_output.shp' )
+    #Save as a csv (do not convert to geopandas until all processing is done to accelerate speeds)
+    stilt_sim_gdf.to_csv(save_filepath,index=False)
 
 if __name__ == '__main__': 
     main()

@@ -33,11 +33,11 @@ data:
 #Convert the data into STILT Compatible Format
 stilt_input:
 	$(PYTHON_INTERPRETER) src/data/make_stilt_data_1.py data/processed/TRI_clean_1990_1999.csv data/processed/unique_TRI_location_height_year 1990 1999
-	Rscript src/data/make_stilt_data_2.r data/processed/unique_TRI_location_height_year_stilt_RUN.csv data/processed/stilt_input/092520_receptor_subsample.rds TRUE
+	Rscript src/data/make_stilt_data_2.r data/processed/unique_TRI_location_height_year_RUN.csv data/processed/stilt_input/092520_receptor_subsample.rds TRUE
 
 #Convert files from netCDF stilt outputs to shapefiles
 stilt_output_conversion:
-	$(PYTHON_INTERPRETER) src/stilt_post_processing/make_stilt_outputs.py data/processed/stilt_output/netcdf/092120_hysplit_v_stilt data/processed/stilt_output/shapefile/092120_hysplit_v_stilt data/processed/unique_TRI_location_height_year_stilt_RUN.csv data/processed/unique_TRI_location_height_year_id_mappings.csv 0 3857
+	$(PYTHON_INTERPRETER) src/stilt_post_processing/make_stilt_outputs.py data/processed/stilt_output/netcdf/092120_hysplit_v_stilt data/processed/stilt_output/shapefile/092120_hysplit_v_stilt.csv data/processed/unique_TRI_location_height_year_RUN.csv data/processed/unique_TRI_location_height_year_IDMAPPING.csv 0
 
 ## Lint using flake8
 lint:
@@ -56,7 +56,7 @@ stilt_validation:
 
 #Convert netCDF files to a single shapefile
 stilt_validation_output_conversion:
-	$(PYTHON_INTERPRETER) src/stilt_post_processing/make_stilt_outputs.py data/processed/stilt_output/netcdf/092520_styrene data/processed/stilt_output/shapefile/092520_styrene data/processed/styrene_stilt_RUN.csv data/processed/styrene_id_mappings.csv 0.001pip 3857
+	$(PYTHON_INTERPRETER) src/stilt_post_processing/make_stilt_outputs.py data/processed/stilt_output/netcdf/092520_styrene data/processed/stilt_output/shapefile/092520_styrene_test.csv data/processed/styrene_stilt_RUN.csv data/processed/styrene_id_mappings.csv 0
 
 ##############################################################################
 #DEV STUFF:

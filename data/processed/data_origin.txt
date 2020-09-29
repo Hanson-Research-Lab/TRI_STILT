@@ -1,17 +1,60 @@
 This document denotes the commands used to arrive at the data
+gl
+09.28.20
 
-1. TRI_base_process_90_99.csv
-    - make data 
-2. TRI_base_process_90_18_nopubchem.csv 
+1. stilt_input: folder for .rds files used as inputs to STILT model
+    - 092120_hysplit_v_stilt.rds
+        - Four distinct releases used to compare HYSPLIT output to STILT 
+        - See notebooks/hysplit_vs_stilt.ipynb for build code
+    - 092120_receptor_subsample.rds
+        - 20 random receptor points taken from 1990-1999 (randomly selected everytime)
+        - make stilt_input: src/data/make_stilt_data_1.py data/processed/TRI_clean_1990_1999.csv data/processed/unique_TRI_location_height_year 1990 1999
+	                                src/data/make_stilt_data_2.r data/processed/unique_TRI_location_height_year_RUN.csv data/processed/stilt_input/092120_receptor_subsample.rds TRUE
+    - 092520_receptor_subsample.rds 
+        - 20 random receptor points taken from 1990-1999.
+        - origin data: data/processed/TRI_clean_1990_1999.csv
+                - make stilt_input: src/data/make_stilt_data_1.py data/processed/TRI_clean_1990_1999.csv data/processed/unique_TRI_location_height_year 1990 1999
+	                                src/data/make_stilt_data_2.r data/processed/unique_TRI_location_height_year_RUN.csv data/processed/stilt_input/092520_receptor_subsample.rds TRUE
+
+2. stilt_output: folder for netCDF files and converted csv files from STILT simulations
+    - netcdf 
+        1. 092120_tuning_run_2 
+            - netCDFs created from initial testing of STILT pipeline
+            - Simulation Data: data/processed/stilt_input/092120_receptors_subsample.rds
+            - Simulation Code: src/stilt_run/092120_tuning_run_2.r
+        2. 092120_hysplit_v_stilt
+            - netCDFs created to explore differences between hysplit_v_stilt.
+            - Simulation Data: data/processed/stilt_input/092120_hysplit_v_stilt.rds
+            - Simulation Code: src/stilt_run/092120_hysplit_v_stilt.r
+    - shapefile
+        1. 092120_tuning_run_2 
+            - conversion of tuning run to multiple shapefiles (old code)
+        2. 092120_hysplit_v_stilt
+            - conversion of tuning run to single shapefile (old code)
+        3. 092120_hysplit_v_stilt.csv
+            - csv version of #2 
+            - src/stilt_post_processing/make_stilt_outputs.py data/processed/stilt_output/netcdf/092120_hysplit_v_stilt data/processed/stilt_output/shapefile/092120_hysplit_v_stilt.csv data/processed/unique_TRI_location_height_year_RUN.csv data/processed/unique_TRI_location_height_year_IDMAPPING.csv 0
+            
+
+3. TRI_base_process_90_18_nopubchem.csv 
     - created to analyze EPA verification sensors from 90-2018. no pubchem data is added as TRI_Pubchem_CIDs.csv does not contain IDs from 2000-2018
     - 	make data 
         - (CHANGES TO MAKEFILE) src/data/make_data.py data/raw/Toxic_Release_Inventory_raw data/processed 1990 2018 0.20 ./data/raw/IARC_Class_Full_List.csv ./data/raw/TRI_Pubchem_CIDs.csv ./data/raw/RSEI_Facility_Data.csv
-        - (CHANGES TO make_data.py)
-            -comment out pubchem merge
-            - rsei_merge = data_RSEI_data_linkage(iarc_merge,rsei_path)
-            - change on save name
-3. unique_TRI_locations_heights_years_stilt_RUN.csv 
-    - All TRI releases compressed for STILT by keeping unique locations, heights and years. 
-    - Currently in explorer.ipynb as stilt_preprocess
-    - created to double check no extra simulations are being run (proximity in STILT output grid is < 1km)
-    - passed to heidi - 09/09/20
+
+4. TRI_clean_1990_1999.csv
+    - created for TRI analysis from 1990-1999. 
+    - make data 
+        - src/data/make_data.py data/raw/Toxic_Release_Inventory_raw data/processed/TRI_clean 1990 1999 0.20 ./data/raw/IARC_Class_Full_List.csv ./data/raw/TRI_Pubchem_CIDs.csv ./data/raw/RSEI_Facility_Data.csv
+
+5. TRI_valid_2010_2010.csv
+    - created for exploratory validation analysis
+    - No pubchem data attached
+    - valid_data:
+	    - src/data/make_data.py data/raw/Toxic_Release_Inventory_raw data/processed/TRI_valid 2010 2010 0.20 ./data/raw/IARC_Class_Full_List.csv ./data/raw/TRI_Pubchem_CIDs.csv ./data/raw/RSEI_Facility_Data.csv
+
+6.unique_TRI_location_height_year_IDMAPPINGS.csv || unique_TRI_location_height_year_RUN.csv
+    - Full dataset of all the TRI releases 
+    - Data used to get 092520_receptor_subsample.rds
+    - make stilt_input
+        - $(PYTHON_INTERPRETER) src/data/make_stilt_data_1.py data/processed/TRI_clean_1990_1999.csv data/processed/unique_TRI_location_height_year 1990 1999
+	    - Rscript src/data/make_stilt_data_2.r data/processed/unique_TRI_location_height_year_RUN.csv data/processed/stilt_input/092520_receptor_subsample.rds TRUE
