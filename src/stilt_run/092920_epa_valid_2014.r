@@ -35,7 +35,7 @@ xres <- 0.01
 yres <- xres
 
 # Meteorological data input
-met_directory   <- '/uufs/chpc.utah.edu/common/home/YOURUID/STILT_DIRECTORY/UT_NARR/'
+met_path   <- '/uufs/chpc.utah.edu/common/home/u0890227/STILT/UT_NARR/'
 met_file_format <- 'UT_NARR%Y%m'
 n_met_min <- 1
 met_subgrid_buffer <- 0.1
@@ -49,10 +49,9 @@ rm_dat     <- T
 run_foot   <- T
 run_trajec <- T
 timeout    <- 3600
-varsiwant  <- c('time', 'indx', 'long', 'lati', 'zagl', 'sigw', 'tlgr', 'zsfc',
-                'icdx', 'temp', 'samt', 'foot', 'shtf', 'tcld', 'dmas', 'dens',
-                'rhfr', 'sphu', 'solw', 'lcld', 'zloc', 'dswf', 'wout', 'mlht',
-                'rain', 'crai', 'pres')
+varsiwant  <- c('time', 'indx', 'long', 'lati', 'zagl', 'foot', 'mlht', 'dens',
+                'samt', 'sigw', 'tlgr')
+
 
 # Transport and dispersion settings
 capemin     <- -1
