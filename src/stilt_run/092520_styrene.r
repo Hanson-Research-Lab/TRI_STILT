@@ -16,11 +16,11 @@ slurm   <- n_nodes > 1
 slurm_options <- list(
   time      = '01:00:00',
   account   = 'hanson',
-  partition = 'kingspeak'
+  partition = 'notchpeak'
 )
 
 # Receptor location(s)
-receptors <- readRDS('092520_styrene.rds')
+receptors <- readRDS('092920_styrene.rds')
 
 # Footprint grid settings, must set at least xmn, xmx, ymn, ymx below
 hnf_plume <- T
