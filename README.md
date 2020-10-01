@@ -8,7 +8,7 @@ September 26th 2020
   </a>
 </p>
 
-## Structure & Organizatio
+## Structure & Organization
 Inspired by the [cookiecutter Data Science Project Structure](https://drivendata.github.io/cookiecutter-data-science/).
 
 - CHPC HOME DIRECTORY 
@@ -78,12 +78,10 @@ All steps create an environment on CHPC to run STILT simulations.
             - add anywhere: 
             - `setenv("R_LIBS_USER",pathJoin("/uufs/chpc.utah.edu/common/home",os.getenv("USER"),"RLibs",myModuleVersion()))`
         - Reload Terminal to update all scripts
-        - Enable Modules (This should be done everytime, unless custom.sh is modified to include these commands) 
+        - Enable Modules (This should be done a new CHPC instance is accessed, unless custom.sh is modified to include these commands) 
             - `module use ~/gl_modules`
             - `module load myR`
             - `module load netcdf-c`
-        - exit the terminal, reload and try: 
-            - `module load myR`
         - To check the installation use `echo $R_LIBS_USER` and make sure this points to your RLibs
 
 2. **[STILT](https://github.com/uataq/stilt)**
@@ -94,7 +92,7 @@ All steps create an environment on CHPC to run STILT simulations.
     - Create a project in the root directory
         - `Rscript -e  "uataq::stilt_init('my_folder_name',branch='hysplit-merge')"`
         - For the purposes of this tutorial, name the project STILT
-    - Test simulation (NECESSARY TO CONFIGURE ALL FILES)
+    - Test simulation (Necessary to configure all files)
         - `bash ./test/test_setup.sh`
         - `bash ./test/test_run_stilt.sh`
 
@@ -320,7 +318,12 @@ These steps become more intensive in terms of processing. It is best to either u
 
 2. **Visualizing Output** 
     - **Description:** <br> In order to visualize and explore outputs from post-processing, a simple jupyter notebook was put together called post_processing.ipynb. Within the notebook, an output .csv can be loaded into a geodataframe and visualized. 
-    - Lets put an image here
+
+<p align="center">
+  <a href="https://github.com/Hanson-Research-Lab">
+    <img src="figures/hysplit_v_stilt/all_simulations_with_source.png"/>
+  </a>
+</p>
 
 <br>
 
