@@ -63,7 +63,7 @@ dxf         <- 1
 dyf         <- 1
 dzf         <- 0.01
 efile       <- ''
-emisshrs    <- 0.01
+emisshrs    <- 0.01 #emiss hrs
 frhmax      <- 3
 frhs        <- 1
 frme        <- 0.1

@@ -26,7 +26,7 @@ receptors <- readRDS('CHANGEME.rds')
 hnf_plume <- T
 projection <- '+proj=longlat'
 smooth_factor <- 1
-time_integrate <- T
+time_integrate <- T #summation over the time interval
 xmn <- -114.12
 xmx <- -109.00
 ymn <- 36.94
@@ -44,7 +44,7 @@ met_subgrid_levels <- NA
 
 # Model control
 n_hours    <- 24
-numpar     <- 200
+numpar     <- 200 #higher number may be necessary 
 rm_dat     <- T
 run_foot   <- T
 run_trajec <- T
@@ -53,80 +53,80 @@ varsiwant  <- c('time', 'indx', 'long', 'lati', 'zagl', 'foot', 'mlht', 'dens',
                 'samt', 'sigw', 'tlgr')
 
 # Transport and dispersion settings
-capemin     <- -1
-cmass       <- 0
-conage      <- 48
-cpack       <- 1
-delt        <- 1
-dxf         <- 1
-dyf         <- 1
-dzf         <- 0.01
-efile       <- ''
-emisshrs    <- 0.01
-frhmax      <- 3
-frhs        <- 1
-frme        <- 0.1
-frmr        <- 0
-frts        <- 0.1
-frvs        <- 0.01
-hscale      <- 10800
-ichem       <- 8
-idsp        <- 2
-initd       <- 0
-k10m        <- 1
-kagl        <- 1
-kbls        <- 1
-kblt        <- 5
-kdef        <- 0
-khinp       <- 0
-khmax       <- 9999
-kmix0       <- 250
-kmixd       <- 3
-kmsl        <- 0
-kpuff       <- 0
-krand       <- 4
-krnd        <- 6
-kspl        <- 1
-kwet        <- 1
-kzmix       <- 0
-maxdim      <- 1
+capemin     <- -1   ##No convection
+cmass       <- 0    ##Compute grid; 0=concentrations, 1=mass
+conage      <- 48   ##Particle to or from puff conversions at conage (hours)
+cpack       <- 1    ##Binary concentration packing; 0=None, 1=non-zero, 2=points, 3=polar
+delt        <- 1    ##Integration time step; 0=autoset; >0= constant
+dxf         <- 1    ##Horizontal X-grid adjustment factor for ensemble
+dyf         <- 1    ##Horizontal Y-grid adjustment factor for ensemble
+dzf         <- 0.01  ##Vertical (0.01 ~ 250m) factor for ensembl
+efile       <- ''    ##Temporal emissions file - to use if there is a change in emissions rate
+emisshrs    <- 24  ##Time from the simulation start time; smothing the particles.
+frhmax      <- 3     ##The range is 0.5 - 3 and we are setting at the max
+frhs        <- 1     ##Standard horizontal puff rounding
+frme        <- 0.1   ##mass rounding fraction for enhanced merging
+frmr        <- 0     ##Mass removal fraction during enhanced merging
+frts        <- 0.1   ##temporal puff rounding fraction
+frvs        <- 0.01  ##Vertical puff rounding fraction
+hscale      <- 10800  ##Horizontal lagrangian time scale (sec)
+ichem       <- 8  ##Stilt mode: Mixing ratio 6 and varying layer 9
+idsp        <- 2  ##Stilt particle dispersion scheme
+initd       <- 0  ##Initial dispersion; particle
+k10m        <- 1  ##Use surface 10m winds/2m temp
+kagl        <- 1  ##Traj output heights are written as AGL
+kbls        <- 1  ##Boundary layer stability from fluxes
+kblt        <- 5  ##Boundary layer turbulence Hanna
+kdef        <- 0  ##Horizontal turbulence vertical
+khinp       <- 0  ##If non-zero particle age in hours is read from a file
+khmax       <- 9999  ##Max duration for particle trajectory
+kmix0       <- 250  ##minimum mixing depth - 150 is the default; nightime boundary layer height. PBL height (50 - 300 is Ben's range)
+kmixd       <- 3    ##Modified Richardson - STILT Default
+kmsl        <- 0    ##Interpretation of height in the control file; above ground
+kpuff       <- 0    ##Linear with time puff growth
+krand       <- 4    ##Random initial seed
+krnd        <- 6    ##Enhanced puff merging takes place at 6 hours; default
+kspl        <- 1    ##Inverval (hrs) at which puff splitting routines are called
+kwet        <- 1    ##Precip defined in met file
+kzmix       <- 0    ## No vertical mixing
+maxdim      <- 1    ## One pollutant per particle
 maxpar      <- numpar
-mgmin       <- 10
-mhrs        <- 9999
-nbptyp      <- 1
-ncycl       <- 0
-ndump       <- 0
-ninit       <- 1
-nstr        <- 0
-nturb       <- 0
-nver        <- 0
-outdt       <- 0
-p10f        <- 1
-pinbc       <- ''
-pinpf       <- ''
-poutf       <- ''
-qcycle      <- 0
-rhb         <- 80
-rht         <- 60
-splitf      <- 1
-tkerd       <- 0.18
-tkern       <- 0.18
-tlfrac      <- 0.1
-tout        <- 0
-tratio      <- 0.75
-tvmix       <- 1
-veght       <- 0.5
-vscale      <- 200
-vscaleu     <- 200
-vscales     <- -1
-wbbh        <- 0
-wbwf        <- 0
-wbwr        <- 0
-wvert       <- FALSE
-w_option    <- 0
-zicontroltf <- 0
-ziscale     <- rep(list(rep(1, 24)), nrow(receptors))
-z_top       <- 25000
+mgmin       <- 10   ##Min met subgrid
+mhrs        <- 9999  ##Max duration
+nbptyp      <- 1     ##Number of redistributed particle size
+ncycl       <- 0     ##Pardump output cycle time
+ndump       <- 0     ##Default -; no pardump file written. Can change to hours
+ninit       <- 1     ##Initialization at model startup
+nstr        <- 0     ##No new trajectory is started  ***DOUBLE CHECK***
+nturb       <- 0     ##Turbulence Off
+nver        <- 0     ##Trajectory vertical split
+outdt       <- 0     ##Output frequency in minutes of teh endpoint positions in teh Particle.dat file
+p10f        <- 1     ##Dust sthreshold velocity - default value
+pinbc       <- ''    ##Particle input file (time-varying boundary)
+pinpf       <- ''    ##Initial conditions or boundary conditions
+poutf       <- ''    ##Name for the particle dump output
+qcycle      <- 0     ##Number of hours between emission start cycles (0 = not cycled). >0 = # emission hours at t *Goes with NUMPAR and ICHEM=10*
+rhb         <- 80    ##Initial relative humidity required to define the base ofa  cloud; Default 80
+rht         <- 60    ##The cloud continues up until relative humidity drops below this value; Default 60
+splitf      <- 1     ##Automatic size adjustment factor for horizongal splitting; Default 1
+tkerd       <- 0.18  ##Unstable turbulent kinetic energy ratio
+tkern       <- 0.18  ##Stable turbulent kinetic energy ratio
+tlfrac      <- 0.1   ##Fraction of Lagrangian vertical time scale used to cal dispersion time step in STILT
+tout        <- 0     ##trajectory output interval in minutes **Default is 60 NEED TO CHECK**
+tratio      <- 0.75  ##Advection stability ratio
+tvmix       <- 1     ##Vertical mixing scale factor
+veght       <- 0.5   ##Height below which particles time is spent is tallied to calculate footprint for particle_stilt.dat; default = 0.5
+vscale      <- 200   ##Vertical Lagrangian time scale (sec) for unstable PBL  **DIDN'T SEE THIS IN DOC - SAME AS BELOW?**
+vscaleu     <- 200   ##Vertical Lagrangian time scale (sec) for unstable PBL
+vscales     <- -1    ##Vertical Lagrangian time scale(sec) for stable PBL; Default is 5; -1 results in the Hanna vertical Lagrangian which is what we want
+wbbh        <- 0     ##Trajectory height at which vertical velocity switches from rise to fall
+wbwf        <- 0     ##Trajectory fixed fall velocity (m/s>0)
+wbwr        <- 0     ##Trajectory fixed rise velocity (m/s)
+wvert       <- FALSE ##Vertical interpolation scheme
+w_option    <- 0     ## STILT specific option: vertical motion calculation method; 0= use vertical velocity from data
+zicontroltf <- 0     ## STILT specific option: Scale the PBL heights in STILT uniformly; default =0
+ziscale     <- rep(list(rep(1, 24)), nrow(receptors))  ##STILT SPECIFIC OPTION: manually scale the mixed-layer height
+z_top       <- 25000  ##STILT specific option: top of model domain in meters above ground level
 
 # Transport error settings
 horcoruverr <- NA

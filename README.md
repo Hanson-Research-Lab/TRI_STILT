@@ -1,5 +1,5 @@
 # STILT for TRI Modeling: 
-Greg Lee, Heidi Hanson, Joemy Ramsay and Ben Fasoli<br>
+Greg Lee, Heidi Hanson, Joemy Ramsay, Derek Malia and Ben Fasoli<br>
 September 26th 2020
 
 <p align="center">
@@ -8,14 +8,55 @@ September 26th 2020
   </a>
 </p>
 
-## Structure & Organization
+## Structure & Organizatio
+Inspired by the [cookiecutter Data Science Project Structure](https://drivendata.github.io/cookiecutter-data-science/).
 
-1. CHPC
+- CHPC HOME DIRECTORY 
+    - _STILT_ - Initialized via `Rscript -e  "uataq::stilt_init('my_folder_name',branch='hysplit-merge')"`. Bolded names represent changes from the cloned repo
+        - _bin_ - Initialized STILT Directory (no modifications)
+        - _Dockerfile_ - Initialized STILT Directory (no modifications)
+        - _docs_ - Initialized STILT Directory (no modifications)
+        - _README.md_ - Initialized STILT Directory (no modifications)
+        - _exe_ - Initialized STILT Directory (no modifications)
+        - **_out_** - STILT Model Outputs
+            - _particles_ - Particle trajectories and simulation configuration information are packaged and saved in a compressed .rds
+            - _footprints_ - ppm/flux output placed on a netCDF grid (where grid cells are represented by centroids)
+            - _by ids_ - simulation details
+        - **_r_** - Houses scripts used to execute stilt
+            - _run stilt.r_ - Main script utilized to execute STILT. Note, when building out a template in TRI_STILT/src/stilt_run, copy the file but leave the run nomenclature the same
+            - _src_ - Initialized STILT Directory (no modifications) containing all STILT code
+            - _stilt cli.r_ - Initialized STILT script (no modifications)
+            - _dependencies.r_ - Initialized STILT script (no modifications)
+        - _rslurm STILT_ - Initialized STILT Directory (no modifications)
+        - _setup_ - Initialized STILT Directory (no modifications)
+        - _stilt-tutorials_ - Initialized STILT Directory (no modifications) created when the test setup scripts are run
+        - _test_ - Initialized STILT Directory (no modifications) created when the test setup scripts are run
+        - **_UT NARR_** - xtrct-grid for NARR data within the Utah boundaries (+/- 6 degrees lat/long from Utah Center) 
 
-1. STILT – a cloned directory to run all STILT simulations.
-2. TRI_STILT – a cloned directory to handle all pre/post data processing and visualization
-  
-The TRI_STILT follows a specific template in order to keep the repo as clean as possible. Below is a summary and purpose of each folder/file: [TO DO]
+    - _TRI_STILT_ - A cloned directory to handle all pre/post data processing and visualization
+        - **_data_** - Houses data only. Data descriptions/origins are found in data_origin.txt which should be modified if data is added. 
+            - _processed_ - Processed raw data. Often this will take the form of cleaned data, stilt inputs and stilt outputs. 
+            - _raw_ - Immutable raw data. All results should be reproducible from this subset of data. 
+            - _validation_ - Data to validate model results. A workflow is in development to script this process. 
+        - **_figures_** - Storage for figures. For consistency, please use the same name for the stilt_input.rds, figures, stilt_run.r and output netcdf/csv/shapefiles
+        - **_notebooks_** - Jupyter notebooks for data exploration, visualization and testing. It is preferred that code in the pipeline be transformed to a scripted form to ensure the project retains its repeatability and readability. 
+            - _descriptiveanalysis.ipynb_ - Loading and exploring the raw TRI data, exploring the distributions of chemicals and spacial locations through time. 
+            - _epavalidation.ipynb_ - A start to validation results from STILT simulations. Within, the nearest 100 TRI releases to every EPA sensor are found and saved in data/validation. A test simulation is run with 100 relevant TRI releases using a non-standard data isolation procedure (before 2015 due to not all NARR data being converted). Relevant data sets include `data/validation/092920_epa_valid_2014.csv`, `data/processed/stilt_input/092920_epa_valid_2014.rds`, `src/validation/092920_epa_validation.r` (convert csv to rds file) and `src/stilt_run/092920_epa_validation.r` (run_stilt.r file for STILT control).
+            - _hysplitvsstilt.ipynb_ - Comparing results from HYSPLIT and STILT. HYSPLIT simulations were saved under validation data. If you need to recreate these simulations, please look into the Environmental Exposome and set a HYSPLIT model of 100 puffs.
+            - _postprocessing.ipynb_ - A test script to demonstrate the basic post processing necessary after make stilt_output_conversion. This details how to extract and visualize portions of the saved .csv file. 
+            - _stiltparametertuning.ipynb_ - An exploration into metrics to optimize STILT hyperparameters. At this point, Ben estimates it will be unnecessary unless the computational load becomes too heavy for the traditional program. 
+        - **_src_** - folder to house all scripts to run pre and post-processing of STILT inputs
+            - _data_ - Clean, link and process data to become ammenable to STILT modeling
+            - _stiltpostprocessing_ - Converts netCDF to csv and links back to STILT simulations
+            - _stiltrun_ - scripts to copy and past as `run_stilt.r` to control simulation. For base case see `src/stilt_run/template_run.r`
+            - _validation_ - Scripts related to validation. Widely unfinished at this point in time. 
+        - **_gitignore_** - git file to allocate files and folders which should not be added to the repo
+        - **_chpc help.txt_** - a quick guide on how to use chpc. 
+        - _LICENSE_ - License for code: MIT license
+        - **_Makefile_** - Control file to run simulations - change to desired parameters and paths before running simulations
+        - **_README.md_** - This file!
+        - **_requirements.txt_** - pip requirements for python venv
+        - _setup.py_ - A setup script to verify a virutal environment is setup correctly
 
 <br>
 
@@ -83,7 +124,50 @@ All steps create an environment on CHPC to run STILT simulations.
     - If available use the following to sync the UT NARR files: 
         - `rsync -azv /uufs/chpc.utah.edu/common/home/u0890227/STILT/UT_NARR ~/`
     - If not available, the LAIR group holds versions of NARR data which can be converted to get the same NARR files using [xtrct-grid](https://github.com/benfasoli/xtrct-grid), a software package from Ben Fasoli. 
+        1. git clone https://github.com/benfasoli/xtrct-grid.git
+        2. access using python3 ./xtrct-grid/entrypoint.py
+        3. Isolate the NARR data for Utah (based upon these grid points:(45.3210,117,0937) (45.3210,105.0937) (33.3210,117,093) (33.3210,105.0937))
+        4. To run: 
+            - create new script within xtrct-grid called batch_extract_grid.py
+            - Insert the following code: 
+                ```
+                import glob
+                import subprocess
+                import os
 
+                #Double check this data is still available with Derrick Malia of LAIR
+                import_path = '/uufs/chpc.utah.edu/common/home/lin-group5/NARR/'
+                count=0
+
+                for filename in glob.glob(import_path+'NARR199[0-9]*'):
+                        narr_filename = filename.split('/')[-1]
+                        out_name = "UT_"+narr_filename
+
+                        #Take all the names and run them through the python 3 script. This is intended to be run from the xtrct-grid folder  
+                        print(narr_filename)
+                        p=subprocess.Popen('python3 ./entrypoint.py \
+                                                --input_dir=$INPUT_DIR \
+                    --input={0} \
+                    --output_dir=$OUTPUT_DIR \
+                    --output={1} \
+                    --xmin=-117.0937 \
+                    --xmax=-105.0937 \
+                    --ymin=33.3210 \
+                    --ymax=45.3210'.format(narr_filename,out_name),stdout=subprocess.PIPE,shell=True)
+
+                        p.wait()
+
+                        print(narr_filename + ' conversion complete')
+                        count +=1
+                ```
+            - create a directory where you want to store the data: 
+                - `mkdir /uufs/chpc.utah.edu/common/home/u0890227/STILT/UT_NARR`
+            - Write the input and output directories 
+                - `export INPUT_DIR=/uufs/chpc.utah.edu/common/home/lin-group5/NARR`
+                - `export OUTPUT_DIR=/uufs/chpc.utah.edu/common/home/u0890227/STILT/UT_NARR`
+            - Navigate to xtrct-grid directory and execute: 
+                - Activate a compute node for ~ 4 hrs
+                - `python3 batch_extract_grid.py`
 
 <br>
 
@@ -154,12 +238,15 @@ All steps are built utilizing a make style system. Before running, please edit t
     - **Changes:** 
         - _slurm options_ - change the time, account and partition based upon your CHPC account. Account reflects the lab name typically and partition represents the CHPC compute node you will use to run the program.
         - _run times_ - Add in the name of the rds file from the previous step (`temp_name.rds`). No filepath is necessary here as this file will be moved into the stilt main directory. 
-        - _time integrate_ - Changed to TRUE (not default) so STILT will create an average over the allocated n_hour time window
+        - _time integrate_ - Changed to TRUE (not default) so STILT will create a sum over the allocated n_hour time window
         - _xmn xmx ymn ymx and xres_ - changed to reflect the boundary of Utah with a bit of a cushion. 
         - _met directory_ - changed to reflect the directory within the STILT project where the UT NARR data is stored. 
         - _met file format_ - changed to reflect the naming nomenclature of UT_NARR files
         - _n hours_ - changed to be 24 to reflect the simulations are running for 24 hours following the release
         - _numpar_ - changed to 1000 on recommendation from Ben Fasoli. For highest efficiency this parameter may need to be tuned (see `notebooks/stilt_parameter_tuning.ipynb` for more on this). 
+        - _emisshrs_ - set to 24 to model a continuous release instead of a single release. This may require more particles. 
+        - _kmix0_ - variable (50-300). Note this marks one of the instabilities of stilt is nightime meteorology
+
 2. **Starting a STILT Simulation** 
     - **Description:** <br> All steps up to this point have been run within the TRI_STILT project folder. These steps can be run on CHPC on locally, whichever suits you best. The following steps require the CHPC user to be within their home directory (both TRI_STILT and STILT directories should be visible with the `ls` command). This portion showcases all the steps to batch a simulation run out to slurm. I would recommend collapsing all these steps into bash script (sh)
     - **Procedure**
@@ -205,6 +292,7 @@ These steps become more intensive in terms of processing. It is best to either u
         1. Not yet accounting for leap year
         2. csv is a workable output
         3. This is still a slow process. Needs acceleration for large batches to not create a bottleneck. Consider join instead of merge within make_stilt_outputs.py or a better method for compression of data into a single UT_exposure dataframe. 
+        4. The footprint files export ppm/flux, summed over the total simulation window timing. When we multiply by lbs/day this gives the mixing ratio. I am not sure that units work particularly well for validation. SO THIS IS SOMETHING THAT SHOULD BE LOOKED AT AGAIN. 
     - **Makefile Command:** `make stilt_input`
     - **Inputs:**
         1. _stilt netcdf file path_ - file path to folder of STILT footprints (netcdf .nc format) 
@@ -252,6 +340,9 @@ After chatting with Ben, it was decided that 1,000 particles was alright for our
 STILT and HYSPLIT are both programs capable of tracking particles in time. Initially they started as the same program and have diverged over time. We wanted to sanity check our STILT simulations by comparins HYSPLIT and STILT simulations. This work is done within `notebooks/hysplit_vs_stilt.ipynb` with figures in `figures/hysplit_v_stilt`. 
 
 **EPA Monitor Validation** 
-There exist some EPA sensors which monitor chemicals within the air back to 1990 and are within reasonable proximity to a TRI release. In order to boost the strength of our validation, we plan to model relevant TRI releases through 2018 with comparable EPA sensor data to validate how well our model estimates chemical concentration. {IN PROGRESS --> see `notebooks/validation.ipynb`}
+There exist some EPA sensors which monitor chemicals within the air back to 1990 and are within reasonable proximity to a TRI release. In order to boost the strength of our validation, we plan to model relevant TRI releases through 2018 with comparable EPA sensor data to validate how well our model estimates chemical concentration. {IN PROGRESS --> see `notebooks/epa_validation.ipynb`}
+
+This section is where the most work needs to be done. Specifically, the lead sensors need to be isolated, and simulations run. Then we need to start to distill the signal from noise utilizing windows where lead is being produced and not produced
 
 Note: This requires an added datafile from the UBOX (TRI_ValidationSet.csv into `data/validation/`)
+
