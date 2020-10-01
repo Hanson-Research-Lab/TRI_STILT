@@ -1,5 +1,5 @@
 # STILT for TRI Modeling: 
-Greg Lee, Heidi Hanson, Joemy Ramsay, Derek Malia and Ben Fasoli<br>
+[Greg Lee](https://greglee1905.github.io/personalpage/), [Heidi Hanson](https://medicine.utah.edu/surgery/research/research-sections/uinquire/research-groups/hanson/), [Joemy Ramsay](https://medicine.utah.edu/surgery/research/research-sections/uinquire/research-groups/hanson/members.php), [Derek Malia](http://home.chpc.utah.edu/~u0703457/dereks_homepage/) and [Ben Fasoli](https://benfasoli.com/)<br>
 September 26th 2020
 
 <p align="center">
@@ -86,7 +86,7 @@ All steps create an environment on CHPC to run STILT simulations.
 
 2. **[STILT](https://github.com/uataq/stilt)**
     - Install the library using an R terminal
-        - `install.packages(c("rslurm"),lib=c(paste("/uufs/chpc.utah.edu/common/home/",Sys.getenv("USER"),"/RLibs/",Sys.getenv("R_VERSION"),sep="")), repos=c("http://cran.us.r-project.org"),verbose=TRUE)`
+        - `install.packages(c("rslurm","splitstackshape"),lib=c(paste("/uufs/chpc.utah.edu/common/home/",Sys.getenv("USER"),"/RLibs/",Sys.getenv("R_VERSION"),sep="")), repos=c("http://cran.us.r-project.org"),verbose=TRUE)`
         - `if (!require('devtools')) install.packages('devtools')`
         - `devtools::install_github('benfasoli/uataq')`
     - Create a project in the root directory
