@@ -330,7 +330,7 @@ These steps become more intensive in terms of processing. It is best to either u
 ---
 ## Validation
 
-**Parameter Tuning** 
+**Parameter Tuning** <br>
 Intially, we believed there was some tuning processes to elucidate the ideal model parameters for our case. To evaluate how particles and smoothing affected model we came up with three metrics.  Note that these parameters also enable comparison between simulations to guage how the shape is changing (IOU between two plumes) and how much stability there is on a cell to cell basis (COV) 
 
 1. The plume area as determined by convex hull
@@ -339,10 +339,10 @@ Intially, we believed there was some tuning processes to elucidate the ideal mod
 
 After chatting with Ben, it was decided that 1,000 particles was alright for our use case. If we ever need to return to those intial metrics, they are housed in `notebooks/stilt_parameter_tuning.ipynb`.
 
-**Comparison to Hysplit** 
+**Comparison to Hysplit** <br>
 STILT and HYSPLIT are both programs capable of tracking particles in time. Initially they started as the same program and have diverged over time. We wanted to sanity check our STILT simulations by comparins HYSPLIT and STILT simulations. This work is done within `notebooks/hysplit_vs_stilt.ipynb` with figures in `figures/hysplit_v_stilt`. 
 
-**EPA Monitor Validation** 
+**EPA Monitor Validation** <br>
 There exist some EPA sensors which monitor chemicals within the air back to 1990 and are within reasonable proximity to a TRI release. In order to boost the strength of our validation, we plan to model relevant TRI releases through 2018 with comparable EPA sensor data to validate how well our model estimates chemical concentration. {IN PROGRESS --> see `notebooks/epa_validation.ipynb`}
 
 This section is where the most work needs to be done. Specifically, the lead sensors need to be isolated, and simulations run. Then we need to start to distill the signal from noise utilizing windows where lead is being produced and not produced
