@@ -1,6 +1,6 @@
 Data Origin for /data/raw 
 gl
-09.28.20
+10.01.20
 
 1. Toxic_Release_Inventory_raw 
     - original TRI Release Data from UBOX Environmental_Data_Master/Chemicals_Hazardous_Waste/Toxic_Release_Inventory
@@ -24,3 +24,8 @@ gl
 5. TRI_Pubchem_CIDs.csv
     - A lookup table for pubchem API querry. Last edited 09.24.20. 
     - KNOWN PROBLEM: Methyl Isobutyl Ketone produces an error if querried from the API
+
+6. utah_counties.gdb
+    - geodatabase with the Utah county shapes
+    - Source: https://gis.utah.gov/data/boundaries/ 
+    - pulled 01.21.20

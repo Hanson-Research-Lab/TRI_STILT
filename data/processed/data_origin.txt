@@ -15,6 +15,11 @@ gl
         - origin data: data/processed/TRI_clean_1990_1999.csv
                 - make stilt_input: src/data/make_stilt_data_1.py data/processed/TRI_clean_1990_1999.csv data/processed/unique_TRI_location_height_year 1990 1999
 	                                src/data/make_stilt_data_2.r data/processed/unique_TRI_location_height_year_RUN.csv data/processed/stilt_input/092520_receptor_subsample.rds TRUE
+    - 092920_epa_valid_2014.rds
+        - 100 receptor subsample taken from epa_validation.ipynb. Special conditions where each date is not being calculated but instead only those dates which have EPA sensor data. Due to limitations within CHPC only run a subselection
+        - origin data: see notebooks/epa_validation.ipynb
+            - Processing was done jupyter as the order was not compatible with typical make commands. Used the following data files: 
+            - epa_validation.ipynb -> data/validation/092920_epa_valid_2014.csv ->  src/validation/092920_epa_validation.r -> data/stilt_input/092920_epa_valid_2014.rds                   
 
 2. stilt_output: folder for netCDF files and converted csv files from STILT simulations
     - netcdf 
@@ -26,6 +31,11 @@ gl
             - netCDFs created to explore differences between hysplit_v_stilt.
             - Simulation Data: data/processed/stilt_input/092120_hysplit_v_stilt.rds
             - Simulation Code: src/stilt_run/092120_hysplit_v_stilt.r
+        3. 092920_epa_valid_2014
+            - netCDFs created to examine a sample of validation data (although I think this will require much more planning after talking with ben on 09.30.20)
+            - Simulation Data: data/stilt_input/092920_epa_valid_2014.rds 
+            - Simulation Code: data/stilt_run/092920_epa_valid_2014.r
+
     - shapefile
         1. 092120_tuning_run_2 
             - conversion of tuning run to multiple shapefiles (old code)
@@ -34,7 +44,7 @@ gl
         3. 092120_hysplit_v_stilt.csv
             - csv version of #2 
             - src/stilt_post_processing/make_stilt_outputs.py data/processed/stilt_output/netcdf/092120_hysplit_v_stilt data/processed/stilt_output/shapefile/092120_hysplit_v_stilt.csv data/processed/unique_TRI_location_height_year_RUN.csv data/processed/unique_TRI_location_height_year_IDMAPPING.csv 0
-            
+        
 
 3. TRI_base_process_90_18_nopubchem.csv 
     - created to analyze EPA verification sensors from 90-2018. no pubchem data is added as TRI_Pubchem_CIDs.csv does not contain IDs from 2000-2018

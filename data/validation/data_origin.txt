@@ -7,20 +7,27 @@ gl
     - Pulled on 09.04.20
     - contains sensors within 10 km 
     - data linked to data/processed/TRI_base_process_90_18_nopubchem.csv and data/raw/TRIChemicals_Monitors
+
 2. EPA_validation_50.csv
     - csv file created from validation.ipynb --> contains nearby TRI releases to EPA sensors from 1990-2018.
     - Pulled on 09.16.20
     - contains sensors within 50 km 
     - data linked to data/processed/TRI_base_process_90_18_nopubchem.csv and data/raw/TRIChemicals_Monitors
+
 3. EPA_validation_100.csv
     - csv file created from validation.ipynb --> contains nearby TRI releases to EPA sensors from 1990-2018.
     - Pulled on 09.16.20
     - contains sensors within 100 km 
     - data linked to data/processed/TRI_base_process_90_18_nopubchem.csv and data/raw/TRIChemicals_Monitors
+
 4. TRI_ValidationSet.csv
     - linked list of EPA sensors and nearby TRI sites from 1990-2017. 
     - assembled by Joemy Ramsay in 09/20
     - UBOX: HansonResearchGroup/Analysis/Exposome/TRI_Modeling/TRI_ValidationSet.csv
+
 5. TRI_Chemicals_Monitors.csv
     - list of EPA chemical monitors from Joemy Ramsay Used to find TRI location, time-frame and chemical pairs
-    - 
+    
+6. HYSPLIT_STILT_COMPAR
+    - HYSPLIT shapefiles from x4 simulations to explore stilt vs hysplit. Run with 100 puffs. 
+    - Derived from the Environmental_Exposome/TRI repo

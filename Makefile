@@ -52,7 +52,7 @@ valid_data:
 #WENT OUT A SELECTED ONLY STYRENE (see notebook)
 stilt_validation: 
 	$(PYTHON_INTERPRETER) src/data/make_stilt_data_1.py data/processed/STYRENE_DEMO.csv data/processed/styrene 2010 2010
-	Rscript src/data/make_stilt_data_2.r data/processed/styrene_stilt_RUN.csv data/processed/stilt_input/092520_styrene.rds TRUE
+	Rscript src/data/make_stilt_data_2.r data/processed/styrene_RUN.csv data/processed/stilt_input/dummy_styrene.rds TRUE
 
 #Convert netCDF files to a single shapefile
 stilt_validation_output_conversion:
