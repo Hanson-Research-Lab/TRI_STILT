@@ -68,7 +68,7 @@ All steps create an environment on CHPC to run STILT simulations.
         - `python3.7 -m venv --system-site-packages ~/gl_modules/mystilt_env`
     - Launch the virtual environemnt
         - `module unload python/3.7.3`
-        - `source ~/gl_modules/mystilt_env/bin/activate`
+        - `source ~/gl_modules/mystilt_env/bin/activate.csh`
     - You should see the virtual environment active - see a (mystilt_env) [uxxxxx@kingspeak1:~]
 
 4. **TRI_STILT**
