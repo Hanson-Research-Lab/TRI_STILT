@@ -90,7 +90,7 @@ All steps create an environment on CHPC to run STILT simulations.
         - `if (!require('devtools')) install.packages('devtools')`
         - `devtools::install_github('benfasoli/uataq')`
     - Create a project in the root directory
-        - `Rscript -e  "uataq::stilt_init('my_folder_name',branch='hysplit-merge')"`
+        - `Rscript -e  "uataq::stilt_init('my_folder_name')"`
         - For the purposes of this tutorial, name the project STILT
     - Test simulation (Necessary to configure all files)
         - `bash ./test/test_setup.sh`

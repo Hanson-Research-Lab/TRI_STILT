@@ -26,13 +26,13 @@ clean:
 	find . -type d -name "__pycache__" -delete
 
 ## Make Dataset 
-#Order of inputs: input path, output path (just what you want to name. Will add _min_year_max_year.csv to end of file), min year, max year, IARC path, Pubchem Path, RSEI path
+#Order of inputs: input path, output path (just what you want to name. Will add _min_year_max_year.csv to end of file), min year, max year, threshold (removes columns with over the threshold amount for missing data), IARC path, Pubchem Path, RSEI path
 data: 
-	$(PYTHON_INTERPRETER) src/data/make_data.py data/raw/Toxic_Release_Inventory_raw data/processed/TRI_clean 1990 1999 0.20 ./data/raw/IARC_Class_Full_List.csv ./data/raw/TRI_Pubchem_CIDs.csv ./data/raw/RSEI_Facility_Data.csv
+	$(PYTHON_INTERPRETER) src/data/make_data.py data/raw/Toxic_Release_Inventory_raw data/processed/TRI_clean 1990 1995 0.20 ./data/raw/IARC_Class_Full_List.csv ./data/raw/TRI_Pubchem_CIDs.csv ./data/raw/RSEI_Facility_Data.csv
 
 #Convert the data into STILT Compatible Format
 stilt_input:
-	$(PYTHON_INTERPRETER) src/data/make_stilt_data_1.py data/processed/TRI_clean_1990_1999.csv data/processed/unique_TRI_location_height_year 1990 1999
+	$(PYTHON_INTERPRETER) src/data/make_stilt_data_1.py data/processed/TRI_clean_1990_1995.csv data/processed/unique_TRI_location_height_year 1990 1999
 	Rscript src/data/make_stilt_data_2.r data/processed/unique_TRI_location_height_year_RUN.csv data/processed/stilt_input/092520_receptor_subsample.rds TRUE
 
 #Convert files from netCDF stilt outputs to shapefiles
