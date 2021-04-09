@@ -33,7 +33,7 @@ library("tidyverse")
 #**********************************************************************#
 #**********************************************************************#
 ### IARC
-setwd("/Users/joemyramsay/files/HCI/AP_Modeling/TRI_DispersionModeling/TRI_STILT/data/raw")
+setwd("/home/hhpower/Documents/TRIStilt/TRI_STILT")
 iarc <- read.csv("IARC_Class_Full_List.csv")
 iarc <- subset(iarc, select = c(CAS.No., Agent, Group))
 
@@ -63,7 +63,7 @@ iarc <- subset(iarc, str_detect(iarc$cas_std, "[A-Z 0-9]"))
 
 #**********************************************************************#
 ### RSEI Chemical Data
-setwd("/Users/joemyramsay/files/HCI/AP_Modeling/TRI_DispersionModeling/TRI_STILT/data/raw")
+##setwd("/Users/joemyramsay/files/HCI/AP_Modeling/TRI_DispersionModeling/TRI_STILT/data/raw")
 rsei_chem <- read.csv("RSEI_Chemical_Data.csv")
 rsei_chem <- subset(rsei_chem, select = c(CASNumber, CASStandard, Chemical, Added, 
                                           ExpansionFlag, Core88ChemicalFlag, 
@@ -94,7 +94,7 @@ rsei_chem$merged <- NULL
 
 #**********************************************************************#
 ### RSEI Facility Data
-setwd("/Users/joemyramsay/files/HCI/AP_Modeling/TRI_DispersionModeling/TRI_STILT/data/raw")
+##setwd("/Users/joemyramsay/files/HCI/AP_Modeling/TRI_DispersionModeling/TRI_STILT/data/raw")
 rsei_fac <- read.csv("RSEI_Facility_Data.csv")
 rsei_fac <- subset(rsei_fac, select = c(FacilityID, FacilityNumber, FRSID, Latitude,
                                         Longitude, Street, City, County, State, ZIP9,
@@ -130,7 +130,7 @@ rsei_fac <- subset(rsei_fac, rsei_fac$rsei_state %in%  c("UT"))
 
 #**********************************************************************#
 ### TRI
-setwd("/Users/joemyramsay/files/HCI/AP_Modeling/TRI_DispersionModeling/TRI_STILT/data/raw/Toxic_Release_Inventory_raw")
+setwd("/home/hhpower/Documents/TRIStilt/TRI_STILT/raw/Toxic_Release_Inventory_raw")
 temp <- list.files(pattern = "*.csv")
 tri_files <- lapply(temp, read.csv)
 
@@ -180,7 +180,7 @@ tri_raw$cas_std <-paste(str_sub(tri_raw$cas, 1, tri_raw$cas_length - 3),
 
 ##### Restrict Dataset
 ######## AP years: 1990-1999
-tri_raw <- subset(tri_raw, tri_raw$year >= 1990 & tri_raw$year <= 1999)
+tri_raw <- subset(tri_raw, tri_raw$year >= 1990 & tri_raw$year <= 1991)
 
 ######## Facilities with fugitive & stack emissions > 0
 tri_raw <- subset(tri_raw, tri_raw$fugitive > 0 | tri_raw$stack > 0)
@@ -258,7 +258,7 @@ tri_clean$fugative_daily <- tri_clean$fugitive/tri_clean$n_days
 tri_clean$yr_start <- tri_clean$yr_end <- tri_clean$n_days <- NULL
 
 ### Export Dataset
-write.csv(tri_clean, file = "/Users/joemyramsay/files/HCI/AP_Modeling/TRI_DispersionModeling/TRI_STILT/data/processed/tri_clean.csv")
+write.csv(tri_clean, file = "/Users/joemyramsay/files/HCI/AP_Modeling/TRI_DispersionModeling/TRI_STILT/data/processed/tri_clean9091.csv")
 
 
 
