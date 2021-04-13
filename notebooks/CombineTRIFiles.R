@@ -23,8 +23,11 @@
 #******************************************************************************#
 
 rm(list = ls())
-library("tidyverse")
-
+##library("tidyverse")
+library(stringr)
+library(dplyr)
+library(tidyr)
+library(purrr)
 #**********************************************************************#
 #**********************************************************************#
 #**********************************************************************#
@@ -33,7 +36,7 @@ library("tidyverse")
 #**********************************************************************#
 #**********************************************************************#
 ### IARC
-setwd("/home/hhpower/Documents/TRIStilt/TRI_STILT")
+setwd("/home/hhpower/Documents/TRIStilt/TRI_STILT/data/raw/")
 iarc <- read.csv("IARC_Class_Full_List.csv")
 iarc <- subset(iarc, select = c(CAS.No., Agent, Group))
 
@@ -130,8 +133,8 @@ rsei_fac <- subset(rsei_fac, rsei_fac$rsei_state %in%  c("UT"))
 
 #**********************************************************************#
 ### TRI
-setwd("/home/hhpower/Documents/TRIStilt/TRI_STILT/raw/Toxic_Release_Inventory_raw")
-temp <- list.files(pattern = "*.csv")
+setwd("/home/hhpower/Documents/TRIStilt/TRI_STILT/data/raw/Toxic_Release_Inventory_raw/")
+temp <- list.files(path="/home/hhpower/Documents/TRIStilt/TRI_STILT/data/raw/Toxic_Release_Inventory_raw/", pattern = "*.csv")
 tri_files <- lapply(temp, read.csv)
 
 names(tri_files) <- str_replace(temp, pattern = ".csv", replacement = "") # Name each tibble to match file name
@@ -180,7 +183,7 @@ tri_raw$cas_std <-paste(str_sub(tri_raw$cas, 1, tri_raw$cas_length - 3),
 
 ##### Restrict Dataset
 ######## AP years: 1990-1999
-tri_raw <- subset(tri_raw, tri_raw$year >= 1990 & tri_raw$year <= 1991)
+tri_raw <- subset(tri_raw, tri_raw$year >= 1990 & tri_raw$year <= 1999)
 
 ######## Facilities with fugitive & stack emissions > 0
 tri_raw <- subset(tri_raw, tri_raw$fugitive > 0 | tri_raw$stack > 0)
@@ -258,7 +261,7 @@ tri_clean$fugative_daily <- tri_clean$fugitive/tri_clean$n_days
 tri_clean$yr_start <- tri_clean$yr_end <- tri_clean$n_days <- NULL
 
 ### Export Dataset
-write.csv(tri_clean, file = "/Users/joemyramsay/files/HCI/AP_Modeling/TRI_DispersionModeling/TRI_STILT/data/processed/tri_clean9091.csv")
+write.csv(tri_clean, file = "/home/hhpower/Documents/TRIStilt/tri_clean9099.csv")
 
 
 
