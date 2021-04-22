@@ -10,7 +10,7 @@ output_wd <- file.path(stilt_wd, 'out')
 lib.loc <- .libPaths()[1]
 
 # Parallel simulation settings
-n_cores <- 1
+n_cores <- 2
 n_nodes <- 16
 slurm   <- n_nodes > 1
 slurm_options <- list(
@@ -18,6 +18,9 @@ slurm_options <- list(
   account   = 'hanson',
   partition = 'lonepeak8'
 )
+
+# Add receptors file 
+receptors <- readRDS('Cas68122_1999.rds')
 
 # Simulation timing, yyyy-mm-dd HH:MM:SS (UTC)
 t_start <- '1999-01-01 00:00:00'
@@ -50,9 +53,9 @@ yres <- xres
 
 # Meteorological data input
 met_path           <- '/uufs/chpc.utah.edu/common/home/u0008154/UT_NARR/'
-met_file_format    <- '%Y%m%d.%Hz.hrrra'
+met_file_format    <- 'UT_NARR%Y%m'
 met_subgrid_buffer <- 0.1
-met_subgrid_enable <- F
+met_subgrid_enable <- T
 met_subgrid_levels <- NA
 n_met_min          <- 1
 
